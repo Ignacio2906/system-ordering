@@ -58,7 +58,7 @@ async function cargarClientes() {
         <td>${cliente.telefono || ''}</td>
         <td>${cliente.correo || ''}</td>
         <td>
-          <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.dni}')">Eliminar</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.id}')">Eliminar</button>
         </td>
       `;
 
