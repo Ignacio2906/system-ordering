@@ -1,0 +1,138 @@
+/* Estilos generales */
+body {
+    background: #000;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;  /* Centra horizontalmente */
+    align-items: center;      /* Centra verticalmente */
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Estilo de la tarjeta de inicio de sesión */
+.card-login {
+    background-color: #343a40;
+    border: 1px solid #28a745;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.card-header {
+    margin-bottom: 20px;
+}
+
+.card-header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.logo-img {
+    width: 120px;  /* Tamaño ajustado del logo */
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Estilo de los inputs */
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.input-group .input-group-prepend {
+    background-color: #ff0000;
+    padding: 10px;
+    border-radius: 5px 0 0 5px;
+    color: white;
+}
+
+.input-group .form-control {
+    padding: 10px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid #28a745;
+    width: 100%;
+    border-radius: 0 5px 5px 0;
+}
+
+/* Estilo del botón */
+.login_btn {
+    width: 100%;
+    background-color: #28a745;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border: none;
+    margin-top: 20px;
+}
+
+.login_btn:hover {
+    background-color: #ff0000;
+}
+
+/* Media Queries para Responsividad */
+
+/* Para pantallas medianas (hasta 767px) */
+@media (max-width: 767px) {
+    .card-login {
+        padding: 15px;
+        max-width: 90%; /* Ajuste de tamaño para dispositivos más pequeños */
+    }
+
+    .card-header h1 {
+        font-size: 1.25rem;
+    }
+
+    .logo-img {
+        max-width: 100px;  /* Ajusta el tamaño del logo */
+    }
+
+    .input-group .form-control {
+        font-size: 1rem;
+    }
+
+    .login_btn {
+        font-size: 1.2rem;
+    }
+}
+
+/* Para pantallas más pequeñas (hasta 480px) */
+@media (max-width: 480px) {
+    .card-login {
+        padding: 10px;
+    }
+
+    .card-header h1 {
+        font-size: 1.125rem;
+    }
+
+    .input-group .form-control {
+        font-size: 0.9rem;
+    }
+
+    .login_btn {
+        font-size: 1rem;
+    }
+
+    .logo-img {
+        max-width: 80px;  /* Reduce aún más la imagen en pantallas pequeñas */
+    }
+}

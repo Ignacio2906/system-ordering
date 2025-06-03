@@ -1,0 +1,12 @@
+body, html {
+    background-image: url('https://png.pngtree.com/thumb_back/fw800/background/20220515/pngtree-flat-design-seamless-gray-pattern-of-a-web-icon-featuring-a-restaurant-cloche-photo-image_17980112.jpg');
+    height: 100%;
+}
+
+#profile-img {
+    height: 180px;
+}
+
+.h-80 {
+    height: 80% !important;
+}
