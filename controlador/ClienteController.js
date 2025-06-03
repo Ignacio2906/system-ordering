@@ -5,6 +5,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const cliente = {
+    dni: document.getElementById('txtdni').value,
     nombre: document.getElementById('txtnombre').value,
     apellidoPaterno: document.getElementById('txtapepat').value,
     apellidoMaterno: document.getElementById('txtapemat').value,
@@ -49,6 +50,7 @@ async function cargarClientes() {
       const tr = document.createElement('tr');
 
       tr.innerHTML = `
+        <td>${cliente.dni || ''}</td>      
         <td>${cliente.nombre || ''}</td>
         <td>${cliente.apellidoPaterno || ''}</td>
         <td>${cliente.apellidoMaterno || ''}</td>
@@ -56,7 +58,7 @@ async function cargarClientes() {
         <td>${cliente.telefono || ''}</td>
         <td>${cliente.correo || ''}</td>
         <td>
-          <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.id}')">Eliminar</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.dni}')">Eliminar</button>
         </td>
       `;
 
