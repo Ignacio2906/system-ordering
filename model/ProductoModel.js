@@ -1,57 +1,58 @@
-import { db } from '../conexion/firebase.js';
-import { storage } from '../conexion/firebase.js';
-import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
+// model/ProductoModel.js
+import { db, storage } from "../conexion/firebase.js";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-storage.js";
 
-const productoModel = {
-  agregarProducto: async function(producto, imagenFile) {
-    try {
-      // 1. Subir imagen a Storage
-      const storageRef = ref(storage, `productos/${imagenFile.name}`);
-      await uploadBytes(storageRef, imagenFile);
-      const imageUrl = await getDownloadURL(storageRef);
+const coleccion = collection(db, "productos");
 
-      // 2. Guardar datos en Firestore
-      const productosRef = collection(db, 'productos');
-      const docRef = await addDoc(productosRef, {
-        ...producto,
-        imagenUrl: imageUrl,
-        createdAt: serverTimestamp()
-      });
+// Subir imagen y devolver URL
+async function subirImagen(file) {
+  const ruta = `productos/${file.name}`;
+  const storageRef = ref(storage, ruta);
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
+}
 
-      return docRef.id;
-    } catch (error) {
-      console.error("Error agregando producto:", error);
-      throw error;
-    }
-  },
+// Agregar producto a Firestore
+async function agregarProducto(producto, imagenFile) {
+  const urlImagen = await subirImagen(imagenFile);
+  const nuevoProducto = {
+    ...producto,
+    imagen: urlImagen,
+    imagenNombre: imagenFile.name, // Para poder eliminarla luego si se quiere
+    fecha: new Date()
+  };
+  await addDoc(coleccion, nuevoProducto);
+}
 
-  obtenerProductos: async function () {
-    try {
-      const productosRef = collection(db, 'productos');
-      const snapshot = await getDocs(productosRef);
+// Obtener todos los productos
+async function obtenerProductos() {
+  const consulta = await getDocs(coleccion);
+  return consulta.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
+}
 
-      const productos = [];
-      snapshot.forEach((doc) => {
-        productos.push({ id: doc.id, ...doc.data() });
-      });
+// Eliminar producto
+async function eliminarProducto(id) {
+  const productoRef = doc(db, "productos", id);
+  await deleteDoc(productoRef);
+}
 
-      return productos;
-    } catch (error) {
-      console.error("Error obteniendo productos:", error);
-      throw error;
-    }
-  },
-
-  eliminarProducto: async function (id) {
-    try {
-      const docRef = doc(db, 'productos', id);
-      await deleteDoc(docRef);
-    } catch (error) {
-      console.error("Error eliminando producto:", error);
-      throw error;
-    }
-  }
+export default {
+  agregarProducto,
+  obtenerProductos,
+  eliminarProducto
 };
-
-export default productoModel;

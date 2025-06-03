@@ -1,3 +1,4 @@
+// controller/ProductoController.js
 import productoModel from '../model/ProductoModel.js';
 
 const form = document.getElementById('formProducto');
@@ -13,8 +14,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const nombre = form.nombre.value;
-  const descripcion = form.descripcion.value;
+  const nombre = form.nombre.value.trim();
+  const descripcion = form.descripcion.value.trim();
   const precio = parseFloat(form.precio.value);
   const stock = parseInt(form.stock.value);
   const imagenFile = form.imagen.files[0];
@@ -26,11 +27,15 @@ form.addEventListener('submit', async (e) => {
 
   const producto = { nombre, descripcion, precio, stock };
 
-  await productoModel.agregarProducto(producto, imagenFile);
-  form.reset();
-
-  const productos = await productoModel.obtenerProductos();
-  mostrarProductos(productos);
+  try {
+    await productoModel.agregarProducto(producto, imagenFile);
+    form.reset();
+    const productos = await productoModel.obtenerProductos();
+    mostrarProductos(productos);
+  } catch (error) {
+    alert("Ocurrió un error al agregar el producto.");
+    console.error(error);
+  }
 });
 
 // Mostrar productos en tabla
@@ -44,6 +49,7 @@ function mostrarProductos(productos) {
       <td>${p.descripcion}</td>
       <td>${p.precio}</td>
       <td>${p.stock}</td>
+      <td><img src="${p.imagen}" alt="imagen" width="60"/></td>
       <td>
         <button class="btn btn-danger btn-sm" data-id="${p.id}">Eliminar</button>
       </td>
@@ -51,7 +57,6 @@ function mostrarProductos(productos) {
     tbody.appendChild(row);
   });
 
-  // Agregar evento para eliminar
   document.querySelectorAll('button[data-id]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.getAttribute('data-id');
