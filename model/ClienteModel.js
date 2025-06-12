@@ -1,6 +1,6 @@
 // clienteModel.js
 import { db } from '../conexion/firebase.js';
-import { collection, addDoc, getDocs, orderBy, query, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
 const clienteModel = {
   agregarCliente: async function(cliente) {
@@ -16,25 +16,24 @@ const clienteModel = {
       throw error;
     }
   },
-obtenerClientes: async function () {
-  try {
-    const clientesRef = collection(db, 'clientes');
 
-    // ✅ Sin ordenamiento para evitar errores si no hay 'createdAt'
-    const querySnapshot = await getDocs(clientesRef);
+  obtenerClientes: async function () {
+    try {
+      const clientesRef = collection(db, 'clientes');
+      const querySnapshot = await getDocs(clientesRef);
 
-    let clientes = [];
-    querySnapshot.forEach((doc) => {
-      clientes.push({ id: doc.id, ...doc.data() });
-    });
+      let clientes = [];
+      querySnapshot.forEach((doc) => {
+        clientes.push({ id: doc.id, ...doc.data() });
+      });
 
-    console.log("Clientes obtenidos:", clientes); // Para verificar en consola
-    return clientes;
-  } catch (error) {
-    console.error("Error obteniendo clientes: ", error);
-    throw error;
-  }
-},
+      return clientes;
+    } catch (error) {
+      console.error("Error obteniendo clientes: ", error);
+      throw error;
+    }
+  },
+
   eliminarCliente: async function(id) {
     try {
       const docRef = doc(db, 'clientes', id);

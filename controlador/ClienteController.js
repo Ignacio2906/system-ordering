@@ -24,56 +24,61 @@ document.querySelector('form').addEventListener('submit', async (e) => {
   }
 });
 
-const clientes = await clienteModel.obtenerClientes();
-console.log(clientes); // Mira aquí si el campo apellidoPaterno está presente
-
 async function cargarClientes() {
   try {
     const clientes = await clienteModel.obtenerClientes();
-    console.log("Clientes obtenidos:", clientes);
-    
+    const tabla = $('#tabla-clientes');
+    const tbody = tabla.find('tbody');
 
-    const tbody = document.querySelector("#tabla-clientes tbody");
-    if (!tbody) {
+    if (!tbody.length) {
       console.error("No se encontró el tbody dentro de la tabla.");
       return;
     }
 
-    tbody.innerHTML = ''; // Limpiar contenido previo
-
-    if (clientes.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8">No hay clientes registrados.</td></tr>';
-      return;
+    // Destruir DataTable anterior si ya existe
+    if ($.fn.DataTable.isDataTable(tabla)) {
+      tabla.DataTable().destroy();
     }
 
-    clientes.forEach(cliente => {
-      const tr = document.createElement('tr');
+    tbody.html(''); // Limpiar la tabla
 
-      tr.innerHTML = `
-        <td>${cliente.dni || ''}</td>      
-        <td>${cliente.nombre || ''}</td>
-        <td>${cliente.apellidoPaterno || ''}</td>
-        <td>${cliente.apellidoMaterno || ''}</td>
-        <td>${cliente.direccion || ''}</td>
-        <td>${cliente.telefono || ''}</td>
-        <td>${cliente.correo || ''}</td>
-        <td>
-          <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.id}')">Eliminar</button>
-        </td>
-      `;
+    if (clientes.length === 0) {
+      tbody.html('<tr><td colspan="8">No hay clientes registrados.</td></tr>');
+    } else {
+      clientes.forEach(cliente => {
+        const tr = `
+          <tr>
+            <td>${cliente.dni || ''}</td>
+            <td>${cliente.nombre || ''}</td>
+            <td>${cliente.apellidoPaterno || ''}</td>
+            <td>${cliente.apellidoMaterno || ''}</td>
+            <td>${cliente.direccion || ''}</td>
+            <td>${cliente.telefono || ''}</td>
+            <td>${cliente.correo || ''}</td>
+            <td>
+              <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.id}')">Eliminar</button>
+            </td>
+          </tr>
+        `;
+        tbody.append(tr);
+      });
+    }
 
-      tbody.appendChild(tr);
+    // Reiniciar DataTables después de llenar
+    tabla.DataTable({
+      pageLength: 10,
+      lengthMenu: [10, 25, 50, 100],
+      language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+      }
     });
-    console.log("Apellido Paterno del cliente:", cliente.apellidoPaterno);
-
 
   } catch (error) {
     console.error("Error al cargar clientes: ", error);
   }
 }
 
-window.cargarClientes = cargarClientes; // para que puedas llamarla desde consola o después del login
-
+window.cargarClientes = cargarClientes;
 
 window.eliminarCliente = async function(id) {
   try {
