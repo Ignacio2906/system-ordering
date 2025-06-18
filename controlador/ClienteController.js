@@ -90,7 +90,7 @@ window.eliminarCliente = async function (id) {
 
 cargarClientes();
 
-// ⚠️ Redibujar si se redimensiona la pantalla
+//  Redibujar si se redimensiona la pantalla
 window.addEventListener('resize', () => {
   cargarClientes();
 });
