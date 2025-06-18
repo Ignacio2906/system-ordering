@@ -1,4 +1,3 @@
-// clienteController.js
 import clienteModel from '../model/ClienteModel.js';
 
 document.querySelector('form').addEventListener('submit', async (e) => {
@@ -24,52 +23,52 @@ document.querySelector('form').addEventListener('submit', async (e) => {
   }
 });
 
+let tabla; // Para mantener la instancia
+
 async function cargarClientes() {
   try {
     const clientes = await clienteModel.obtenerClientes();
-    const tabla = $('#tabla-clientes');
-    const tbody = tabla.find('tbody');
+    const tablaElement = $('#tabla-clientes');
 
-    if (!tbody.length) {
-      console.error("No se encontró el tbody dentro de la tabla.");
-      return;
+    // Destruir si existe
+    if ($.fn.DataTable.isDataTable(tablaElement)) {
+      tablaElement.DataTable().destroy();
+      tablaElement.empty(); // Borra thead/tbody generados
     }
 
-    // Destruir DataTable anterior si ya existe
-    if ($.fn.DataTable.isDataTable(tabla)) {
-      tabla.DataTable().destroy();
-    }
+    const isMobile = window.innerWidth < 720;
 
-    tbody.html(''); // Limpiar la tabla
-
-    if (clientes.length === 0) {
-      tbody.html('<tr><td colspan="8">No hay clientes registrados.</td></tr>');
-    } else {
-      clientes.forEach(cliente => {
-        const tr = `
-          <tr>
-            <td>${cliente.dni || ''}</td>
-            <td>${cliente.nombre || ''}</td>
-            <td>${cliente.apellidoPaterno || ''}</td>
-            <td>${cliente.apellidoMaterno || ''}</td>
-            <td>${cliente.direccion || ''}</td>
-            <td>${cliente.telefono || ''}</td>
-            <td>${cliente.correo || ''}</td>
-            <td>
-              <button class="btn btn-danger btn-sm" onclick="eliminarCliente('${cliente.id}')">Eliminar</button>
-            </td>
-          </tr>
-        `;
-        tbody.append(tr);
-      });
-    }
-
-    // Reiniciar DataTables después de llenar
-    tabla.DataTable({
-      pageLength: 10,
-      lengthMenu: [10, 25, 50, 100],
+    tabla = tablaElement.DataTable({
+      data: clientes,
+      scrollX: !isMobile,
+      responsive: isMobile
+        ? {
+            details: {
+              type: 'inline',
+              target: 'tr'
+            }
+          }
+        : false,
+      columns: [
+        { data: 'dni', title: 'DNI' },
+        { data: 'nombre', title: 'Nombre' },
+        { data: 'apellidoPaterno', title: 'Apellido Paterno' },
+        { data: 'apellidoMaterno', title: 'Apellido Materno' },
+        { data: 'direccion', title: 'Dirección' },
+        { data: 'telefono', title: 'Teléfono' },
+        { data: 'correo', title: 'Correo' },
+        {
+          data: null,
+          title: 'Acciones',
+          orderable: false,
+          searchable: false,
+          render: function (data, type, row) {
+            return `<button class="btn btn-danger btn-sm" onclick="eliminarCliente('${row.id}')">Eliminar</button>`;
+          }
+        }
+      ],
       language: {
-        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+        url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
       }
     });
 
@@ -78,9 +77,8 @@ async function cargarClientes() {
   }
 }
 
-window.cargarClientes = cargarClientes;
-
-window.eliminarCliente = async function(id) {
+// Eliminar cliente
+window.eliminarCliente = async function (id) {
   try {
     await clienteModel.eliminarCliente(id);
     alert('Cliente eliminado');
@@ -91,3 +89,8 @@ window.eliminarCliente = async function(id) {
 };
 
 cargarClientes();
+
+// ⚠️ Redibujar si se redimensiona la pantalla
+window.addEventListener('resize', () => {
+  cargarClientes();
+});
