@@ -1,68 +1,105 @@
-// controller/ProductoController.js
 import productoModel from '../model/ProductoModel.js';
 
-const form = document.getElementById('formProducto');
-const tbody = document.getElementById('producto');
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('formProducto');
+  let tabla;
 
-// Cargar productos al iniciar
-window.addEventListener('DOMContentLoaded', async () => {
-  const productos = await productoModel.obtenerProductos();
-  mostrarProductos(productos);
-});
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-// Agregar producto
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    const producto = {
+      nombre: document.getElementById('txtnombre').value,
+      descripcion: document.getElementById('txtdescripcion').value,
+      precio: parseFloat(document.getElementById('txtprecio').value),
+      stock: parseInt(document.getElementById('txtstock').value)
+    };
 
-  const nombre = form.nombre.value.trim();
-  const descripcion = form.descripcion.value.trim();
-  const precio = parseFloat(form.precio.value);
-  const stock = parseInt(form.stock.value);
-  const imagenFile = form.imagen.files[0];
+    const imagenFile = document.getElementById('imagenArchivo').files[0];
+    if (!imagenFile) {
+      alert('Selecciona una imagen.');
+      return;
+    }
 
-  if (!imagenFile) {
-    alert("Selecciona una imagen.");
-    return;
-  }
-
-  const producto = { nombre, descripcion, precio, stock };
-
-  try {
-    await productoModel.agregarProducto(producto, imagenFile);
-    form.reset();
-    const productos = await productoModel.obtenerProductos();
-    mostrarProductos(productos);
-  } catch (error) {
-    alert("Ocurrió un error al agregar el producto.");
-    console.error(error);
-  }
-});
-
-// Mostrar productos en tabla
-function mostrarProductos(productos) {
-  tbody.innerHTML = '';
-  productos.forEach(p => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${p.id}</td>
-      <td>${p.nombre}</td>
-      <td>${p.descripcion}</td>
-      <td>${p.precio}</td>
-      <td>${p.stock}</td>
-      <td><img src="${p.imagen}" alt="imagen" width="60"/></td>
-      <td>
-        <button class="btn btn-danger btn-sm" data-id="${p.id}">Eliminar</button>
-      </td>
-    `;
-    tbody.appendChild(row);
+    try {
+      await productoModel.agregarProducto(producto, imagenFile);
+      alert('Producto agregado correctamente');
+      form.reset();
+      cargarProductos();
+    } catch (error) {
+      alert('Error al agregar producto');
+    }
   });
 
-  document.querySelectorAll('button[data-id]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.getAttribute('data-id');
-      await productoModel.eliminarProducto(id);
+  async function cargarProductos() {
+    try {
       const productos = await productoModel.obtenerProductos();
-      mostrarProductos(productos);
-    });
+      const tablaElement = $('#tabla-productos');
+
+      if ($.fn.DataTable.isDataTable(tablaElement)) {
+        tablaElement.DataTable().destroy();
+        tablaElement.empty();
+      }
+
+      const isMobile = window.innerWidth < 800;
+
+      tabla = tablaElement.DataTable({
+        data: productos,
+        scrollX: !isMobile,
+        responsive: isMobile
+          ? {
+              details: {
+                type: 'inline',
+                target: 'tr'
+              }
+            }
+          : false,
+        columns: [
+          { data: 'nombre', title: 'Nombre' },
+          { data: 'descripcion', title: 'Descripción' },
+          { data: 'precio', title: 'Precio' },
+          { data: 'stock', title: 'Stock' },
+          {
+            data: 'imagen',
+            title: 'Imagen',
+            render: function (data) {
+              return `<img src="${data}" width="60"/>`;
+            }
+          },
+          {
+            data: null,
+            title: 'Acciones',
+            orderable: false,
+            searchable: false,
+            render: function (data, type, row) {
+              return `<button class="btn btn-danger btn-sm" onclick="eliminarProducto('${row.id}')">Eliminar</button>`;
+            }
+          }
+        ],
+        language: {
+          url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        }
+      });
+
+    } catch (error) {
+      console.error("Error al cargar productos: ", error);
+    }
+  }
+
+  window.eliminarProducto = async function (id) {
+    try {
+      await productoModel.eliminarProducto(id);
+      alert('Producto eliminado');
+      cargarProductos();
+    } catch (error) {
+      alert('Error eliminando producto');
+    }
+  };
+
+  cargarProductos();
+
+  window.addEventListener('resize', () => {
+    if (tabla) {
+      tabla.columns.adjust().responsive.recalc();
+    }
   });
-}
+});
