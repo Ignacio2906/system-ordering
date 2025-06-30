@@ -84,5 +84,12 @@
       .then(res => res.text())
       .then(data => { document.getElementById('footer-placeholder').innerHTML = data; });
   </script>
+
+  <script type="module">
+  import { validarRol } from '../controlador/sessionCheck.js';
+  validarRol(["admin"]);
+</script>
+
+
 </body>
 </html>

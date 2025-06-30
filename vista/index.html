@@ -43,20 +43,49 @@
         </div>
         <!-- Footer -->
         <div id="footer-placeholder"></div>
-            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-        <script>
-            fetch('../maintop.html')
-                .then(res => res.text())
-                .then(data => {
-                    document.getElementById('navbar-placeholder').innerHTML = data;
-                });
+           <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 
-            fetch('../mainbottom.html')
-                .then(res => res.text())
-                .then(data => {
-                    document.getElementById('footer-placeholder').innerHTML = data;
-                });
-        </script>
+<script type="module">
+  fetch('../maintop.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('navbar-placeholder').innerHTML = data;
+
+      const rol = localStorage.getItem("rol");
+      const menus = {
+        admin: ["menu-cliente", "menu-producto", "menu-detalle", "menu-pedido"],
+        mozo: ["menu-cliente", "menu-detalle", "menu-pedido"],
+        cocinero: ["menu-detalle"]
+      };
+
+      if (!rol || !menus[rol]) {
+        alert("Acceso no autorizado. Inicia sesión.");
+        window.location.href = "../login.html";
+        return;
+      }
+
+      // Ocultar todos primero
+      Object.values(menus).flat().forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+      });
+
+      // Mostrar solo los del rol actual
+      menus[rol].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "block";
+      });
+    });
+
+  // Footer
+  fetch('../mainbottom.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('footer-placeholder').innerHTML = data;
+    });
+</script>
+
+
     </body>
 </html>

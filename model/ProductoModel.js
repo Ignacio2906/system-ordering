@@ -22,16 +22,24 @@ async function subirImagen(file) {
   return await getDownloadURL(storageRef);
 }
 
+// Subir imagen y devolver URL
+async function subirImagen(file) {
+  const ruta = `productos/${file.name}`;
+  const storageRef = ref(storage, ruta);
+  await uploadBytes(storageRef, file);
+  return await getDownloadURL(storageRef);
+}
+
+// Agregar producto a Firestore
 async function agregarProducto(producto, imagenFile) {
+  const urlImagen = await subirImagen(imagenFile);
   const nuevoProducto = {
     ...producto,
-    imagen: "https://via.placeholder.com/60", // Imagen temporal
-    imagenNombre: "sin-imagen",
+    imagen: urlImagen,
+    imagenNombre: imagenFile.name, // Para poder eliminarla luego si se quiere
     fecha: new Date()
   };
-
   await addDoc(coleccion, nuevoProducto);
-  console.log("✅ Producto agregado (sin imagen)");
 }
 
 

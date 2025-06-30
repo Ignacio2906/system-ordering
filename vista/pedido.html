@@ -88,6 +88,12 @@
                 document.getElementById('footer-placeholder').innerHTML = data;
             });
     </script>
+    <script type="module">
+  import { validarRol } from '../controlador/sessionCheck.js';
+  validarRol(["admin", "mozo"]);
+</script>
+
+
 </body>
 
 </html>
