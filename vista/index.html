@@ -1,91 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <script>
-            fetch('../mainhead.html')
-                .then(res => res.text())
-                .then(data => {
-                    document.head.innerHTML += data;
-                });
-        </script>
-    </head>
-    <body>
-        <!-- Navbar + Header -->
-        <div id="navbar-placeholder"></div>
-        <!-- Contenido principal -->
-        <div class="container-fluid py-5">
-            <div class="container">
-                <div class="section-title">
-                    <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Nuestra Historia</h4>
-                    <h1 class="display-4">Sabores Orientales desde 1985</h1>
-                </div>
-                <div class="row">
-                    <div class="col-lg-4 py-0 py-lg-5">
-                        <h1 class="mb-3">Tradicion y Cultura</h1>
-                        <h5 class="mb-3">Lo mejor de la gastronomia china y peruana</h5>
-                        <p>En CHIFA CONTINENTAL, cada plato cuenta una historia. Desde nuestro arroz chaufa hasta el exquisito Kam Lu Wantan, combinamos tradicion, sabor y aprecio para brindarte una experiencia unica.</p>
-                        <a href="catalogo.html" class="btn btn-secondary font-weight-bold py-2 px-4 mt-2">Ver Menu</a>
-                    </div>
-                    <div class="col-lg-4 py-5 py-lg-0" style="min-height: 300px;">
-                        <div class="position-relative h-100">
-                            <img class="position-absolute w-100 h-100" src="../img/logo.jpeg" style="object-fit: cover;" alt="Foto del restaurante Chifa">
-                        </div>
-                    </div>
-                    <div class="col-lg-4 py-0 py-lg-5">
-                        <h1 class="mb-3">Nuestra Vision</h1>
-                        <p>Ser el chifa preferido por las familias, ofreciendo platos autenticos, frescos y preparados con pasión por nuestros chefs expertos.</p>
-                        <h5 class="mb-3"><i class="fa fa-check text-primary mr-3"></i>Ingredientes frescos y de calidad</h5>
-                        <h5 class="mb-3"><i class="fa fa-check text-primary mr-3"></i>Autenticas recetas chinas y peruanas</h5>
-                        <h5 class="mb-3"><i class="fa fa-check text-primary mr-3"></i>Atencion calida y familiar</h5>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer -->
-        <div id="footer-placeholder"></div>
-           <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <head>
+    <meta charset="UTF-8">
+    <title>Inicio</title>
+    <script>
+      fetch('../mainhead.html')
+        .then(res => res.text())
+        .then(data => {
+          document.head.innerHTML += data;
+        });
+    </script>
+  </head>
+  <body>
+    <div id="navbar-placeholder"></div>
 
-<script type="module">
-  fetch('../maintop.html')
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById('navbar-placeholder').innerHTML = data;
+    <div class="container mt-5">
+      <h1>Bienvenido a CHIFA CONTINENTAL</h1>
+    </div>
 
+    <div id="footer-placeholder"></div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
       const rol = localStorage.getItem("rol");
-      const menus = {
-        admin: ["menu-cliente", "menu-producto", "menu-detalle", "menu-pedido"],
-        mozo: ["menu-cliente", "menu-detalle", "menu-pedido"],
-        cocinero: ["menu-detalle"]
-      };
 
-      if (!rol || !menus[rol]) {
-        alert("Acceso no autorizado. Inicia sesión.");
-        window.location.href = "../login.html";
-        return;
-      }
+      fetch('../maintop.html')
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById('navbar-placeholder').innerHTML = data;
 
-      // Ocultar todos primero
-      Object.values(menus).flat().forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "none";
-      });
+          const permisos = {
+            "menu-cliente": ["admin", "mozo"],
+            "menu-producto": ["admin"],
+            "menu-pedido": ["admin", "mozo"],
+            "menu-detalle": ["admin", "mozo", "cocinero"]
+          };
 
-      // Mostrar solo los del rol actual
-      menus[rol].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = "block";
-      });
-    });
+          for (const [id, roles] of Object.entries(permisos)) {
+            const el = document.getElementById(id);
+            if (el && !roles.includes(rol)) {
+              el.style.display = "none";
+            }
+          }
+        });
 
-  // Footer
-  fetch('../mainbottom.html')
-    .then(res => res.text())
-    .then(data => {
-      document.getElementById('footer-placeholder').innerHTML = data;
-    });
-</script>
-
-
-    </body>
+      fetch('../mainbottom.html')
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById('footer-placeholder').innerHTML = data;
+        });
+    </script>
+  </body>
 </html>

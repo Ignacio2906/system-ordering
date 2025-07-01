@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <script>
         fetch('../mainhead.html')
@@ -10,7 +9,6 @@
             });
     </script>
 </head>
-
 <body>
     <!-- Navbar dinámico -->
     <div id="navbar-placeholder"></div>
@@ -72,37 +70,44 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer dinámico -->
-    <div id="footer-placeholder"></div>
-
-    <!-- JS necesarios -->
+   <div id="footer-placeholder"></div>
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-
-    <!-- JS personalizado -->
-    <script src="detalle.js" type="module"></script>
-    <script src="excelDetalle.js" type="module"></script>
-    <!-- Cargar navbar y footer -->
-    <script>
-        fetch('../maintop.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('navbar-placeholder').innerHTML = data;
-            });
-
-        fetch('../mainbottom.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('footer-placeholder').innerHTML = data;
-            });
-    </script>
     <script type="module">
-  import { validarRol } from '../controlador/sessionCheck.js';
-  validarRol(["admin", "mozo", "cocinero"]);
-</script>
+      const rol = localStorage.getItem("rol");
+      // Protección de acceso
+      if (!rol || !["admin", "mozo", "cocinero"].includes(rol)) {
+        alert("Acceso denegado");
+        window.location.href = "index.html";
+      }
+      // Navbar
+      fetch('../maintop.html')
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById('navbar-placeholder').innerHTML = data;
 
+          const permisos = {
+            "menu-cliente": ["admin", "mozo"],
+            "menu-producto": ["admin"],
+            "menu-pedido": ["admin", "mozo"],
+            "menu-detalle": ["admin", "mozo", "cocinero"]
+          };
 
+          for (const [id, roles] of Object.entries(permisos)) {
+            const el = document.getElementById(id);
+            if (el && !roles.includes(rol)) {
+              el.style.display = "none";
+            }
+          }
+        });
+
+      // Footer
+      fetch('../mainbottom.html')
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById('footer-placeholder').innerHTML = data;
+        });
+    </script>
 </body>
-
 </html>

@@ -1,59 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- CSS necesarios -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-<script>
-            fetch('../mainhead.html')
-                .then(res => res.text())
-                .then(data => {
-                    document.head.innerHTML += data;
-                });
-        </script>
+  <!-- CSS locales -->
+  <link rel="stylesheet" href="../assets/datatables/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="../assets/datatables/responsive.dataTables.min.css" />
+
+  <script>
+    fetch('../mainhead.html')
+      .then(res => res.text())
+      .then(data => {
+        document.head.innerHTML += data;
+      });
+  </script>
 </head>
 
 <body>
-  <!-- Navbar Start -->
   <div id="navbar-placeholder"></div>
 
-  <!-- Clientes Section Start -->
   <div class="container py-5">
     <div class="row">
       <!-- Formulario -->
       <div class="col-lg-4 mb-4">
         <div class="bg-secondary text-white p-4 rounded">
           <h4 class="mb-4 text-uppercase">Agregar Cliente</h4>
-          <form id="formCliente" method="POST">
-            <div class="form-group">
-              <label for="txtdni">DNI CLIENTE</label>
-              <input type="text" id="txtdni" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="txtnombre">Nombre Cliente</label>
-              <input type="text" id="txtnombre" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="txtapepat">Apellido Paterno</label>
-              <input type="text" id="txtapepat" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="txtapemat">Apellido Materno</label>
-              <input type="text" id="txtapemat" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="txtdireccion">Direccion</label>
-              <input type="text" id="txtdireccion" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="txttelefono">Telefono</label>
-              <input type="text" id="txttelefono" class="form-control" required>
-            </div>
-            <div class="form-group">
-              <label for="txtcorreo">Correo</label>
-              <input type="email" id="txtcorreo" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary mt-2 w-100">Agregar Cliente</button>
+          <form id="formCliente">
+            <div class="form-group"><label>DNI</label><input type="text" id="txtdni" class="form-control" required></div>
+            <div class="form-group"><label>Nombre</label><input type="text" id="txtnombre" class="form-control" required></div>
+            <div class="form-group"><label>Apellido Paterno</label><input type="text" id="txtapepat" class="form-control" required></div>
+            <div class="form-group"><label>Apellido Materno</label><input type="text" id="txtapemat" class="form-control" required></div>
+            <div class="form-group"><label>Dirección</label><input type="text" id="txtdireccion" class="form-control" required></div>
+            <div class="form-group"><label>Teléfono</label><input type="text" id="txttelefono" class="form-control" required></div>
+            <div class="form-group"><label>Correo</label><input type="email" id="txtcorreo" class="form-control" required></div>
+            <button type="submit" class="btn btn-primary w-100 mt-2">Agregar Cliente</button>
           </form>
         </div>
       </div>
@@ -61,27 +39,38 @@
       <!-- Tabla -->
       <div class="col-lg-8">
         <div class="table-responsive">
-          <table id="tabla-clientes" class="display nowrap w-100"></table>
+          <table id="tabla-clientes" class="display nowrap w-100">
+            <thead>
+              <tr>
+                <th>DNI</th>
+                <th>Nombre</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
-  <!-- Clientes Section End -->
 
-  <!-- Footer Start -->
   <div id="footer-placeholder"></div>
 
-  <!-- Scripts -->
+  <!-- Scripts locales -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/datatables/jquery.dataTables.min.js"></script>
+  <script src="../assets/datatables/dataTables.responsive.min.js"></script>
 
-  <!-- Archivos JS de tu app -->
-  <script type="module" src="../model/ClienteModel.js"></script>
-  <script type="module" src="../controlador/ClienteController.js"></script>
+  <!-- Tu JS -->
+  <script type="module" src="../model/clienteModel.js"></script>
+  <script type="module" src="../controlador/clienteController.js"></script>
 
-  <!-- Cargar navbar y footer -->
+  <!-- Navbar y footer -->
   <script>
     fetch('../maintop.html')
       .then(res => res.text())
@@ -95,12 +84,35 @@
         document.getElementById('footer-placeholder').innerHTML = data;
       });
   </script>
+    <script type="module">
+      fetch('../maintop.html')
+  .then(res => res.text())
+  .then(data => {
+    document.getElementById('navbar-placeholder').innerHTML = data;
 
- <script type="module">
-  import { validarRol } from '../controlador/sessionCheck.js';
-  validarRol(["admin", "mozo"]);
-</script>
+    const permisos = {
+      "menu-cliente": ["admin", "mozo"],
+      "menu-producto": ["admin"],
+      "menu-pedido": ["admin", "mozo"],
+      "menu-detalle": ["admin", "mozo", "cocinero"]
+    };
+
+    const rol = localStorage.getItem("rol");
+
+    for (const [id, roles] of Object.entries(permisos)) {
+      const el = document.getElementById(id);
+      if (el && !roles.includes(rol)) {
+        el.style.display = "none";
+      }
+    }
+  });
 
 
+    </script>
+
+  <script type="module">
+    import { validarRol } from '../controlador/sessionCheck.js';
+    validarRol(["admin", "mozo"]);
+  </script>
 </body>
 </html>

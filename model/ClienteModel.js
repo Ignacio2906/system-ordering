@@ -1,9 +1,16 @@
-// clienteModel.js
+// model/clienteModel.js
 import { db } from '../conexion/firebase.js';
-import { collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
 const clienteModel = {
-  agregarCliente: async function(cliente) {
+  agregarCliente: async function (cliente) {
     try {
       const clientesRef = collection(db, 'clientes');
       const docRef = await addDoc(clientesRef, {
@@ -34,7 +41,7 @@ const clienteModel = {
     }
   },
 
-  eliminarCliente: async function(id) {
+  eliminarCliente: async function (id) {
     try {
       const docRef = doc(db, 'clientes', id);
       await deleteDoc(docRef);

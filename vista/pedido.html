@@ -63,37 +63,52 @@
         </div>
     </div>
 
-    <!-- Footer dinámico -->
     <div id="footer-placeholder"></div>
 
-    <!-- JS Básicos -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <!-- JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="../assets/datatables/jquery.dataTables.min.js"></script>
+  <script src="../assets/datatables/dataTables.responsive.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 
-    <!-- JS personalizados -->
-    <script type="module" src="../model/PedidoModel.js"></script>
-    <script type="module" src="../controlador/PedidoController.js"></script>
+  <!-- Archivos personalizados -->
+  <script type="module" src="../model/PedidoModel.js"></script>
+  <script type="module" src="../controlador/PedidoController.js"></script>
 
-    <!-- Cargar navbar y footer -->
-    <script>
-        fetch('../maintop.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('navbar-placeholder').innerHTML = data;
-            });
+  <!-- Navbar/Footer dinámicos -->
+  <script>
+    fetch('../maintop.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('navbar-placeholder').innerHTML = data;
 
-        fetch('../mainbottom.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('footer-placeholder').innerHTML = data;
-            });
-    </script>
-    <script type="module">
-  import { validarRol } from '../controlador/sessionCheck.js';
-  validarRol(["admin", "mozo"]);
-</script>
+        const rol = localStorage.getItem("rol");
+        const permisos = {
+          "menu-cliente": ["admin", "mozo"],
+          "menu-producto": ["admin"],
+          "menu-pedido": ["admin", "mozo"],
+          "menu-detalle": ["admin", "mozo", "cocinero"]
+        };
 
+        for (const [id, roles] of Object.entries(permisos)) {
+          const el = document.getElementById(id);
+          if (el && !roles.includes(rol)) {
+            el.style.display = "none";
+          }
+        }
+      });
 
+    fetch('../mainbottom.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('footer-placeholder').innerHTML = data;
+      });
+  </script>
+
+  <script type="module">
+    import { validarRol } from '../controlador/sessionCheck.js';
+    validarRol(["admin", "mozo"]);
+  </script>
 </body>
 
 </html>
