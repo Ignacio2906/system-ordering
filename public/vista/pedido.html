@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Pedidos | CHIFA CONTINENTAL</title>
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
+
+  <!-- Head dinámico -->
+  <script>
+    fetch('../mainhead.html')
+      .then(res => res.text())
+      .then(data => {
+        document.head.innerHTML += data;
+      });
+  </script>
+</head>
+<body>
+  <!-- Navbar -->
+  <div id="navbar-placeholder"></div>
+
+  <!-- Sección Pedidos -->
+  <div class="container py-5">
+    <div class="row">
+      <!-- Formulario -->
+      <div class="col-lg-4 mb-4">
+        <div class="bg-secondary text-white p-4 rounded">
+          <h4 class="mb-4 text-uppercase">Realizar Pedido</h4>
+          <form id="formulario-pedido" onsubmit="return false;">
+            <!-- Mozos -->
+            <div class="form-group">
+              <label for="mozosId">Seleccionar mozo</label>
+              <select id="mozosId" class="form-control" required></select>
+            </div>
+             <!-- Mesa -->
+            <div class="form-group">
+              <label for="mesaId">Seleccionar Mesa</label>
+              <select id="mesaId" class="form-control" required></select>
+            </div>
+
+
+            <!-- Productos -->
+            <div class="form-group">
+              <label for="productoId">Seleccionar Producto</label>
+              <select id="productoId" class="form-control" required></select>
+            </div>
+
+            <div class="form-group">
+              <label for="cantidad">Cantidad</label>
+              <input type="number" id="cantidad" class="form-control" min="1" required>
+            </div>
+
+            <div class="form-group">
+              <label for="precioUnitario">Precio Unitario</label>
+              <input type="text" id="precioUnitario" class="form-control" readonly>
+            </div>
+
+            <button type="button" id="btn-agregar-producto" class="btn btn-info mt-2 w-100">Agregar al pedido</button>
+
+            <!-- Lista de productos del pedido -->
+            <table class="table table-sm mt-3 text-white">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Precio</th>
+                  <th>Cantidad</th>
+                  <th>Subtotal</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="lista-productos"></tbody>
+            </table>
+
+            <button type="submit" id="btn-registrar" class="btn btn-success mt-3 w-100">Realizar Pedido</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tabla de Pedidos -->
+      <div class="col-lg-8">
+        <div class="table-responsive">
+          <table id="tabla-pedidos" class="display nowrap w-100">
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+  <!-- Módulos -->
+  <script type="module" src="../model/PedidoModel.js"></script>
+  <script type="module" src="../controlador/PedidoController.js"></script>
+  <script type="module" src="../controlador/EstadoController.js"></script>
+  <script type="module" src="../controlador/layoutLoader.js"></script>
+
+  <script>
+    const rol = sessionStorage.getItem("rol");
+    console.log("🔐 Rol actual del usuario:", rol);
+  </script>
+</body>
+</html>

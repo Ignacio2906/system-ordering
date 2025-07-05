@@ -2,16 +2,15 @@
 <html lang="es">
 <head>
   <title>Productos | CHIFA CONTINENTAL</title>
+  <link rel="stylesheet" href="../assets/datatables/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="../assets/datatables/responsive.dataTables.min.css" />
 
-  <!-- DataTables -->
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-
-  <!-- Head dinámico -->
   <script>
     fetch('../mainhead.html')
       .then(res => res.text())
-      .then(data => { document.head.innerHTML += data; });
+      .then(data => {
+        document.head.innerHTML += data;
+      });
   </script>
 </head>
 
@@ -32,7 +31,7 @@
               <input type="text" id="txtnombre" name="nombre" class="form-control" required>
             </div>
             <div class="form-group">
-              <label for="txtdescripcion">Descripcion</label>
+              <label for="txtdescripcion">Descripción</label>
               <input type="text" id="txtdescripcion" name="descripcion" class="form-control" required>
             </div>
             <div class="form-group">
@@ -45,9 +44,9 @@
             </div>
             <div class="form-group">
               <label for="imagenArchivo">Imagen del Producto</label>
-              <input type="file" name="imagen" id="imagenArchivo" class="form-control" accept="image/*" />
+              <input type="file" name="imagen" id="imagenArchivo" class="form-control" accept="image/*" required />
             </div>
-            <button type="submit" class="btn btn-primary mt-2 w-100">Agregar Producto</button>
+            <button type="submit" class="btn btn-primary mt-3 w-100">Agregar Producto</button>
           </form>
         </div>
       </div>
@@ -55,7 +54,19 @@
       <!-- Tabla -->
       <div class="col-lg-8">
         <div class="table-responsive">
-          <table id="tabla-productos" class="display nowrap w-100"></table>
+          <table id="tabla-productos">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Imagen</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -64,32 +75,12 @@
   <!-- Footer -->
   <div id="footer-placeholder"></div>
 
-  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/datatables/jquery.dataTables.min.js"></script>
+  <script src="../assets/datatables/dataTables.responsive.min.js"></script>
 
-  <!-- JS personalizados -->
-  <script type="module" src="../model/ProductoModel.js"></script>
   <script type="module" src="../controlador/ProductoController.js"></script>
-
-  <!-- Cargar navbar y footer -->
-  <script>
-    fetch('../maintop.html')
-      .then(res => res.text())
-      .then(data => { document.getElementById('navbar-placeholder').innerHTML = data; });
-
-    fetch('../mainbottom.html')
-      .then(res => res.text())
-      .then(data => { document.getElementById('footer-placeholder').innerHTML = data; });
-  </script>
-
-  <script type="module">
-  import { validarRol } from '../controlador/sessionCheck.js';
-  validarRol(["admin"]);
-</script>
-
-
+  <script type="module" src="../model/ProductoModel.js"></script>
+  <script type="module" src="../controlador/layoutLoader.js"></script>
 </body>
 </html>

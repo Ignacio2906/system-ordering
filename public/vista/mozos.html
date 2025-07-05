@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>mozos | CHIFA CONTINENTAL</title>
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" />
+
+  <!-- Head dinámico -->
+  <script>
+    fetch('../mainhead.html')
+      .then(res => res.text())
+      .then(data => { document.head.innerHTML += data; });
+  </script>
+</head>
+
+<body>
+  <div id="navbar-wrapper">
+    <div id="navbar-placeholder"></div>
+  </div>
+
+  <div class="container py-5">
+    <div class="row">
+      <!-- Formulario -->
+      <div class="col-lg-4 mb-4">
+        <div class="bg-secondary text-white p-4 rounded">
+          <h4 class="mb-4 text-uppercase">Agregar mozos</h4>
+          <form id="formmozos">
+            <div class="form-group"><label>DNI</label><input type="text" id="txtdni" class="form-control" required></div>
+            <div class="form-group"><label>Nombre</label><input type="text" id="txtnombre" class="form-control" required></div>
+            <div class="form-group"><label>Apellido Paterno</label><input type="text" id="txtapepat" class="form-control" required></div>
+            <div class="form-group"><label>Apellido Materno</label><input type="text" id="txtapemat" class="form-control" required></div>
+            <div class="form-group"><label>Dirección</label><input type="text" id="txtdireccion" class="form-control" required></div>
+            <div class="form-group"><label>Teléfono</label><input type="text" id="txttelefono" class="form-control" required></div>
+            <div class="form-group"><label>Correo</label><input type="email" id="txtcorreo" class="form-control" required></div>
+            <button type="submit" class="btn btn-primary w-100 mt-2">Agregar mozos</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="col-lg-8">
+        <div class="table-responsive">
+          <table id="tabla-mozos" class="display nowrap w-100">
+            <thead>
+              <tr>
+                <th>DNI</th>
+                <th>Nombre</th>
+                <th>Apellido Paterno</th>
+                <th>Apellido Materno</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+
+  <!-- Módulos -->
+  <script type="module" src="../model/MozosModel.js"></script>
+  <script type="module" src="../controlador/MozosController.js"></script>
+  <script type="module" src="../controlador/layoutLoader.js"></script>
+</body>
+</html>
