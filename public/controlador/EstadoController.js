@@ -1,10 +1,10 @@
 import PedidoModel from "../model/PedidoModel.js";
 
+// ✅ Declarar primero la función antes de usarla
 function generarSelectEstado(pedido, rolUsuario) {
   const estadoActual = pedido.estado || "pendiente";
   let estadosPermitidos = [];
 
-  // Lógica de estados permitidos por rol y estado actual
   if (rolUsuario === "admin") {
     estadosPermitidos = ["pendiente", "creado", "entregado", "finalizado"];
   } else if (rolUsuario === "cocinero") {
@@ -22,7 +22,7 @@ function generarSelectEstado(pedido, rolUsuario) {
       estadosPermitidos = [estadoActual];
     }
   } else {
-    estadosPermitidos = [estadoActual]; // Rol desconocido solo puede ver
+    estadosPermitidos = [estadoActual];
   }
 
   const puedeEditar = estadosPermitidos.length > 1 && estadoActual !== "finalizado";
@@ -41,7 +41,7 @@ function generarSelectEstado(pedido, rolUsuario) {
   `;
 }
 
-// ✅ Toast flotante
+// ✅ Función para mostrar un toast
 function mostrarToast(mensaje, tipo = "success") {
   const toast = document.createElement("div");
   toast.innerText = mensaje;
@@ -60,7 +60,7 @@ function mostrarToast(mensaje, tipo = "success") {
   setTimeout(() => toast.remove(), 3000);
 }
 
-// ✅ Función que actualiza el estado en Firebase
+// ✅ Función global para cambio de estado
 window.cambiarEstadoPedido = async function (id, selectElement) {
   const nuevoEstado = selectElement.value;
   const estadoAnterior = selectElement.getAttribute("data-actual");
@@ -75,7 +75,19 @@ window.cambiarEstadoPedido = async function (id, selectElement) {
     await PedidoModel.actualizarEstado(id, nuevoEstado);
     mostrarToast("✅ Estado actualizado correctamente.");
 
-    // Vuelve a cargar la tabla si existe esta función
+    // Si finalizado, liberar mesa
+    if (nuevoEstado === "finalizado") {
+  const pedido = await PedidoModel.obtenerPedidoPorId(id);
+  const numeroMesa = pedido.mesa;
+
+  const mesas = await PedidoModel.obtenerMesas();
+  const mesaCorrespondiente = mesas.find(m => parseInt(m.numero_mesa) === numeroMesa);
+
+  if (mesaCorrespondiente) {
+    await PedidoModel.actualizarMesa(mesaCorrespondiente.id, "libre"); // ✅
+  }
+}
+
     if (typeof window.mostrarPedidos === "function") {
       window.mostrarPedidos();
     }
@@ -86,6 +98,7 @@ window.cambiarEstadoPedido = async function (id, selectElement) {
   }
 };
 
+// ✅ Exporta correctamente
 export default {
   generarSelectEstado
 };

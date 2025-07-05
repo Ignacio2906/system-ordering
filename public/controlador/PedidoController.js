@@ -1,255 +1,144 @@
 import PedidoModel from "../model/PedidoModel.js";
-import EstadoController from "./EstadoController.js";
 
+const mesaContainer = document.getElementById("mesas-container");
+const formulario = document.getElementById("formulario-pedido");
+const cerrarBtn = document.getElementById("cerrar-formulario");
 const mozoselect = document.getElementById("mozosId");
-const mesaSelect = document.getElementById("mesaId");
 const productoSelect = document.getElementById("productoId");
 const cantidadInput = document.getElementById("cantidad");
 const precioInput = document.getElementById("precioUnitario");
 const btnAgregarProducto = document.getElementById("btn-agregar-producto");
 const btnRegistrar = document.getElementById("btn-registrar");
 const listaProductos = document.getElementById("lista-productos");
+const mesaIdInput = document.getElementById("mesaId");
 
-let mozosMap = {};
 let mesasMap = {};
 let productosMap = {};
 let productosPedido = [];
-let tablaPedidos;
-let pedidoEditandoId = null;
-let pedidosGlobal = [];
 
-const rolUsuario = sessionStorage.getItem("rol") || "";
-
-async function cargarmozos() {
-  const mozos = await PedidoModel.obtenermozos();
-  if (!mozoselect) return;
-  mozoselect.innerHTML = '<option value="">Seleccione un mozo</option>';
-  mozos.forEach(mozo => {
-    mozoselect.innerHTML += `<option value="${mozo.dni}">${mozo.nombre} (${mozo.dni})</option>`;
-    mozosMap[mozo.dni] = mozo;
-  });
-}
-
-async function cargarMesas() {
-  const mesas = await PedidoModel.obtenerMesas();
-  if (!mesaSelect) return;
-  mesaSelect.innerHTML = '<option value="">Seleccione una mesa</option>';
+PedidoModel.escucharMesas((mesas) => {
+  mesaContainer.innerHTML = "";
   mesas.forEach(mesa => {
-    mesaSelect.innerHTML += `<option value="${mesa.numero_mesa}">${mesa.numero_mesa}</option>`;
-    mesasMap[mesa.numero_mesa] = mesa;
+    mesasMap[mesa.id] = mesa;
+    const div = document.createElement("div");
+    div.className = `mesa ${mesa.estado_mesa}`;
+    div.textContent = mesa.numero_mesa;
+
+    if (mesa.estado_mesa === "libre") {
+      div.addEventListener("click", () => {
+        mesaIdInput.value = mesa.id;
+        formulario.style.display = "block";
+      });
+    }
+
+    mesaContainer.appendChild(div);
+  });
+});
+
+cerrarBtn.addEventListener("click", () => {
+  formulario.style.display = "none";
+  resetFormulario();
+});
+
+async function cargarMozos() {
+  const mozos = await PedidoModel.obtenerMozos();
+  mozoselect.innerHTML = '<option value="">Seleccione</option>';
+  mozos.forEach(mozo => {
+    mozoselect.innerHTML += `<option value="${mozo.dni}">${mozo.nombre}</option>`;
   });
 }
 
 async function cargarProductos() {
   const productos = await PedidoModel.obtenerProductos();
-  productoSelect.innerHTML = '<option value="">Seleccione un producto</option>';
-  productos.forEach(producto => {
-    productoSelect.innerHTML += `<option value="${producto.id}">${producto.nombre}</option>`;
-    productosMap[producto.id] = producto;
+  productoSelect.innerHTML = '<option value="">Seleccione</option>';
+  productos.forEach(p => {
+    productoSelect.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+    productosMap[p.id] = p;
   });
 }
 
 productoSelect.addEventListener("change", () => {
-  const productoId = productoSelect.value;
-  const producto = productosMap[productoId];
+  const producto = productosMap[productoSelect.value];
   precioInput.value = producto ? producto.precio.toFixed(2) : "";
 });
 
 btnAgregarProducto.addEventListener("click", () => {
-  const productoId = productoSelect.value;
+  const id = productoSelect.value;
   const cantidad = parseInt(cantidadInput.value);
-  const producto = productosMap[productoId];
+  const producto = productosMap[id];
 
-  if (!productoId || !cantidad || cantidad <= 0) {
-    alert("⚠️ Complete los campos del producto correctamente.");
-    return;
+  if (!producto || isNaN(cantidad) || cantidad <= 0) {
+    return alert("⚠️ Selecciona un producto y una cantidad válida.");
   }
 
   const subtotal = producto.precio * cantidad;
-
-  productosPedido.push({
-    producto: producto.nombre, // ✅ GUARDAR NOMBRE en lugar de ID
+  const item = {
+    producto: producto.nombre,
     cantidad,
     precio: producto.precio,
-    total: subtotal // ✅ TOTAL POR ÍTEM
-  });
+    total: subtotal
+  };
+  productosPedido.push(item);
 
   const fila = document.createElement("tr");
   fila.innerHTML = `
-    <td>${producto.nombre}</td>
-    <td>${producto.precio.toFixed(2)}</td>
-    <td>${cantidad}</td>
-    <td>${subtotal.toFixed(2)}</td>
+    <td>${item.producto}</td>
+    <td>${item.precio.toFixed(2)}</td>
+    <td>${item.cantidad}</td>
+    <td>${item.total.toFixed(2)}</td>
     <td><button class="btn btn-sm btn-danger">✕</button></td>
   `;
   fila.querySelector("button").addEventListener("click", () => {
-    productosPedido = productosPedido.filter(p => p !== productosPedido[productosPedido.length - 1]);
+    productosPedido = productosPedido.filter(p => p !== item);
     fila.remove();
   });
   listaProductos.appendChild(fila);
-
   cantidadInput.value = "";
   precioInput.value = "";
+  productoSelect.value = "";
 });
 
-async function registrarPedido() {
-  const mozoId = mozoselect.value;
-  const mesaNumero = mesaSelect.value;
+btnRegistrar.addEventListener("click", async () => {
+  const mozo = mozoselect.value;
+  const mesaId = mesaIdInput.value;
+  const mesaData = mesasMap[mesaId];
 
-  if (!mozoId || !mesaNumero || productosPedido.length === 0) {
-    alert("⚠️ Complete todos los campos y agregue al menos un producto.");
-    return;
-  }
+  if (!mozo) return alert("⚠️ Selecciona un mozo.");
+  if (!mesaId) return alert("⚠️ Selecciona una mesa.");
+  if (productosPedido.length === 0) return alert("⚠️ Agrega al menos un producto.");
 
-  const totalPedido = productosPedido.reduce((acc, item) => acc + item.total, 0);
-
+  const total = productosPedido.reduce((acc, i) => acc + i.total, 0);
   const pedido = {
-    mozos: mozoId,
-    mesa: parseInt(mesaNumero),
+    mozos: mozo,
+    mesa: parseInt(mesaData.numero_mesa),
     estado: "pendiente",
     items: productosPedido,
-    total: totalPedido,
+    total,
     fecha: new Date()
   };
 
   try {
-    if (pedidoEditandoId) {
-      await PedidoModel.actualizarPedido(pedidoEditandoId, pedido);
-      alert("✅ Pedido actualizado correctamente.");
-      pedidoEditandoId = null;
-    } else {
-      await PedidoModel.agregarPedido(pedido);
-      alert("✅ Pedido registrado correctamente.");
-    }
+    await PedidoModel.agregarPedido(pedido);
+    await PedidoModel.actualizarMesa(mesaId, "ocupado");
+    alert("✅ Pedido registrado.");
+    formulario.style.display = "none";
     resetFormulario();
   } catch (err) {
     console.error(err);
-    alert("❌ Error al registrar o actualizar pedido.");
+    alert("❌ Error al registrar el pedido.");
   }
-}
+});
 
 function resetFormulario() {
   mozoselect.value = "";
-  mesaSelect.value = "";
   productoSelect.value = "";
   cantidadInput.value = "";
   precioInput.value = "";
   productosPedido = [];
   listaProductos.innerHTML = "";
-  btnRegistrar.textContent = "Realizar Pedido";
 }
 
-function renderizarPedidos(pedidos) {
-  pedidosGlobal = pedidos;
-  const filas = [];
-
-  pedidos.forEach(pedido => {
-    if (pedido.estado === "inactivo") return;
-
-    const fecha = pedido.fecha?.toDate?.()?.toLocaleDateString() || "Sin fecha";
-    const mozo = mozosMap[pedido.mozos]?.nombre || "(No definido)";
-    const mesa = pedido.mesa || "(Sin mesa)";
-    const productosTexto = Array.isArray(pedido.items)
-      ? pedido.items.map(item => `${item.producto} x ${item.cantidad}`).join("<br>")
-      : "(Sin productos)";
-    const totalTexto = pedido.total?.toFixed(2) || "0.00";
-
-    filas.push([
-      mozo,
-      mesa,
-      productosTexto,
-      totalTexto,
-      fecha,
-      pedido.estado,
-      `<button onclick="editarPedido('${pedido.id}')" class="btn btn-sm btn-primary">Editar</button>`
-    ]);
-  });
-
-  tablaPedidos.clear().rows.add(filas).draw();
-}
-
-window.editarPedido = async function (id) {
-  const pedido = await PedidoModel.obtenerPedidoPorId(id);
-  if (!pedido) return alert("⚠️ Pedido no encontrado.");
-
-  mozoselect.value = pedido.mozos;
-  mesaSelect.value = pedido.mesa;
-  productosPedido = pedido.items || [];
-  listaProductos.innerHTML = "";
-
-  productosPedido.forEach(item => {
-    const fila = document.createElement("tr");
-    fila.innerHTML = `
-      <td>${item.producto}</td>
-      <td>${item.precio.toFixed(2)}</td>
-      <td>${item.cantidad}</td>
-      <td>${item.total.toFixed(2)}</td>
-      <td><button class="btn btn-sm btn-danger">✕</button></td>
-    `;
-    fila.querySelector("button").addEventListener("click", () => {
-      productosPedido = productosPedido.filter(p => p !== item);
-      fila.remove();
-    });
-    listaProductos.appendChild(fila);
-  });
-
-  pedidoEditandoId = id;
-  btnRegistrar.textContent = "Actualizar Pedido";
-};
-
-window.mostrarPedidos = () => PedidoModel.obtenerPedidos().then(renderizarPedidos);
-
-window.addEventListener("DOMContentLoaded", async () => {
-  await cargarmozos();
-  await cargarMesas();
-  await cargarProductos();
-
-  tablaPedidos = $("#tabla-pedidos").DataTable({
-    responsive: {
-      details: {
-        type: 'column',
-        target: 'tr',
-        renderer: function (api, rowIdx, columns) {
-          return columns.map(col => {
-            if (col.hidden) {
-              let value = col.data;
-              if (col.title === "Estado") {
-                const btn = api.cell(rowIdx, 6).nodes().to$().find("button");
-                const pedidoId = btn.attr("onclick")?.match(/'(.+)'/)?.[1];
-                const pedido = pedidosGlobal.find(p => p.id === pedidoId);
-                value = EstadoController.generarSelectEstado(pedido, rolUsuario);
-              }
-              return `<tr><td><strong>${col.title}:</strong></td><td style="overflow-x:auto">${value}</td></tr>`;
-            }
-            return '';
-          }).join('');
-        }
-      }
-    },
-    destroy: true,
-    language: {
-      url: "../assets/datatables/es.json"
-    },
-    columns: [
-      { title: "Mozo" },
-      { title: "Mesa" },
-      { title: "Producto(s)" },
-      { title: "Total" },
-      { title: "Fecha" },
-      { title: "Estado" },
-      { title: "Acciones" }
-    ],
-    createdRow: function (row, data, dataIndex) {
-      const btn = row.cells[6]?.querySelector("button");
-      if (!btn) return;
-      const pedidoId = btn.getAttribute("onclick").match(/'(.+)'/)[1];
-      const pedido = pedidosGlobal.find(p => p.id === pedidoId);
-      if (pedido) {
-        row.cells[5].innerHTML = EstadoController.generarSelectEstado(pedido, rolUsuario);
-      }
-    }
-  });
-
-  PedidoModel.escucharPedidos(renderizarPedidos);
-  btnRegistrar.addEventListener("click", registrarPedido);
+window.addEventListener("DOMContentLoaded", () => {
+  cargarMozos();
+  cargarProductos();
 });

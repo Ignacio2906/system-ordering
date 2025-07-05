@@ -1,0 +1,70 @@
+.mesas-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.mesa {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.mesa:hover {
+  transform: scale(1.1);
+}
+
+.mesa.libre {
+  background-color: green;
+}
+
+.mesa.ocupado {
+  background-color: red !important;
+  cursor: not-allowed;
+}
+
+
+.formulario-flotante {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  background: #343a40;
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  display: none;
+  z-index: 999;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+
+.cerrar-form {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .mesa {
+    width: 60px;
+    height: 60px;
+    font-size: 16px;
+  }
+
+  .formulario-flotante {
+    width: 95%;
+    top: 5%;
+  }
+}

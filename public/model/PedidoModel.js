@@ -8,7 +8,7 @@ import {
   doc,
   updateDoc,
   serverTimestamp,
-  onSnapshot
+  onSnapshot,
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
 const pedidosRef = collection(db, "pedidos");
@@ -16,25 +16,11 @@ const mozosRef = collection(db, "mozos");
 const productosRef = collection(db, "productos");
 const mesasRef = collection(db, "mesas");
 
-async function obtenerPedidos() {
-  const snapshot = await getDocs(pedidosRef);
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-}
-
-async function agregarPedido({ mozos, mesa, estado, items }) {
+async function agregarPedido(pedido) {
   return await addDoc(pedidosRef, {
-    mozos,
-    mesa, // ahora guarda directamente el número de mesa
-    estado,
-    items,
+    ...pedido,
     fecha: serverTimestamp()
   });
-}
-
-async function obtenerPedidoPorId(id) {
-  const pedidoDoc = doc(db, "pedidos", id);
-  const snap = await getDoc(pedidoDoc);
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
 async function actualizarPedido(id, pedidoData) {
@@ -50,7 +36,20 @@ async function actualizarEstado(id, nuevoEstado) {
   return await updateDoc(pedidoDoc, { estado: nuevoEstado });
 }
 
-async function obtenermozos() {
+async function actualizarMesa(id, nuevoEstado) {
+  const ref = doc(db, "mesas", id);
+  return await updateDoc(ref, {
+    estado_mesa: nuevoEstado
+  });
+}
+
+async function obtenerPedidoPorId(id) {
+  const docRef = doc(db, "pedidos", id);
+  const snap = await getDoc(docRef);
+  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+}
+
+async function obtenerMozos() {
   const snapshot = await getDocs(mozosRef);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
@@ -65,21 +64,21 @@ async function obtenerMesas() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-function escucharPedidos(callback) {
-  return onSnapshot(pedidosRef, (snapshot) => {
-    const pedidos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    callback(pedidos);
+function escucharMesas(callback) {
+  return onSnapshot(mesasRef, snapshot => {
+    const mesas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    callback(mesas);
   });
 }
 
 export default {
-  obtenerPedidos,
   agregarPedido,
-  obtenerPedidoPorId,
   actualizarPedido,
   actualizarEstado,
-  obtenermozos,
+  actualizarMesa,
+  obtenerPedidoPorId,
+  obtenerMozos,
   obtenerProductos,
   obtenerMesas,
-  escucharPedidos
+  escucharMesas
 };
