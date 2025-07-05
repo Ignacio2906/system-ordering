@@ -1,8 +1,10 @@
+/* Estilos para la grilla de mesas */
 .mesas-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
   justify-content: center;
+  margin-top: 24px;
 }
 
 .mesa {
@@ -32,39 +34,110 @@
   cursor: not-allowed;
 }
 
-
+/* Estilo del formulario flotante */
 .formulario-flotante {
   position: fixed;
-  top: 10%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   width: 90%;
   max-width: 400px;
-  background: #343a40;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #212529;
   color: white;
-  padding: 20px;
-  border-radius: 12px;
+  padding: 24px 20px;
+  border-radius: 16px;
   display: none;
   z-index: 999;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
+.formulario-flotante h4 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ffc107;
+}
+
+.formulario-flotante label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.formulario-flotante .form-group {
+  margin-bottom: 14px;
+}
+
+.formulario-flotante select,
+.formulario-flotante input {
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 6px 8px;
+}
+
+#btn-agregar-producto {
+  background-color: #0dcaf0;
+  color: white;
+  font-weight: bold;
+  border: none;
+}
+
+#btn-agregar-producto:hover {
+  background-color: #0bbce2;
+}
+
+#btn-registrar {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.table th, .table td {
+  color: white !important;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.btn-danger {
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+/* Botón para cerrar el formulario */
 .cerrar-form {
   position: absolute;
   top: 10px;
   right: 10px;
   font-size: 18px;
+  font-weight: bold;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
+  .formulario-flotante {
+    width: 95%;
+    max-height: 90vh;
+    padding: 20px 16px;
+  }
+
   .mesa {
     width: 60px;
     height: 60px;
     font-size: 16px;
   }
 
-  .formulario-flotante {
-    width: 95%;
-    top: 5%;
+  .formulario-flotante h4 {
+    font-size: 18px;
+  }
+
+  .table th,
+  .table td {
+    font-size: 13px;
   }
 }

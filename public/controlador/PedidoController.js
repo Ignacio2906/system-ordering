@@ -1,25 +1,31 @@
 import PedidoModel from "../model/PedidoModel.js";
 
-const mesaContainer = document.getElementById("mesas-container");
 const formulario = document.getElementById("formulario-pedido");
-const cerrarBtn = document.getElementById("cerrar-formulario");
+const mesaContainer = document.getElementById("mesas-container");
 const mozoselect = document.getElementById("mozosId");
 const productoSelect = document.getElementById("productoId");
 const cantidadInput = document.getElementById("cantidad");
 const precioInput = document.getElementById("precioUnitario");
 const btnAgregarProducto = document.getElementById("btn-agregar-producto");
 const btnRegistrar = document.getElementById("btn-registrar");
+const btnActualizar = document.getElementById("btn-actualizar");
 const listaProductos = document.getElementById("lista-productos");
+const cerrarBtn = document.getElementById("cerrar-formulario");
 const mesaIdInput = document.getElementById("mesaId");
 
-let mesasMap = {};
-let productosMap = {};
-let productosPedido = [];
+const urlParams = new URLSearchParams(window.location.search);
+const pedidoId = urlParams.get("edit");
 
-PedidoModel.escucharMesas((mesas) => {
+let productosMap = {};
+let mesasMap = {};
+let productosPedido = [];
+let pedidoOriginal = null;
+
+PedidoModel.escucharMesas(mesas => {
   mesaContainer.innerHTML = "";
   mesas.forEach(mesa => {
     mesasMap[mesa.id] = mesa;
+
     const div = document.createElement("div");
     div.className = `mesa ${mesa.estado_mesa}`;
     div.textContent = mesa.numero_mesa;
@@ -28,6 +34,8 @@ PedidoModel.escucharMesas((mesas) => {
       div.addEventListener("click", () => {
         mesaIdInput.value = mesa.id;
         formulario.style.display = "block";
+        btnRegistrar.style.display = "inline-block";
+        btnActualizar.style.display = "none";
       });
     }
 
@@ -43,8 +51,8 @@ cerrarBtn.addEventListener("click", () => {
 async function cargarMozos() {
   const mozos = await PedidoModel.obtenerMozos();
   mozoselect.innerHTML = '<option value="">Seleccione</option>';
-  mozos.forEach(mozo => {
-    mozoselect.innerHTML += `<option value="${mozo.dni}">${mozo.nombre}</option>`;
+  mozos.forEach(m => {
+    mozoselect.innerHTML += `<option value="${m.dni}">${m.nombre}</option>`;
   });
 }
 
@@ -58,8 +66,8 @@ async function cargarProductos() {
 }
 
 productoSelect.addEventListener("change", () => {
-  const producto = productosMap[productoSelect.value];
-  precioInput.value = producto ? producto.precio.toFixed(2) : "";
+  const p = productosMap[productoSelect.value];
+  precioInput.value = p ? p.precio.toFixed(2) : "";
 });
 
 btnAgregarProducto.addEventListener("click", () => {
@@ -78,6 +86,7 @@ btnAgregarProducto.addEventListener("click", () => {
     precio: producto.precio,
     total: subtotal
   };
+
   productosPedido.push(item);
 
   const fila = document.createElement("tr");
@@ -93,6 +102,7 @@ btnAgregarProducto.addEventListener("click", () => {
     fila.remove();
   });
   listaProductos.appendChild(fila);
+
   cantidadInput.value = "";
   precioInput.value = "";
   productoSelect.value = "";
@@ -108,6 +118,7 @@ btnRegistrar.addEventListener("click", async () => {
   if (productosPedido.length === 0) return alert("⚠️ Agrega al menos un producto.");
 
   const total = productosPedido.reduce((acc, i) => acc + i.total, 0);
+
   const pedido = {
     mozos: mozo,
     mesa: parseInt(mesaData.numero_mesa),
@@ -121,11 +132,39 @@ btnRegistrar.addEventListener("click", async () => {
     await PedidoModel.agregarPedido(pedido);
     await PedidoModel.actualizarMesa(mesaId, "ocupado");
     alert("✅ Pedido registrado.");
-    formulario.style.display = "none";
     resetFormulario();
+    formulario.style.display = "none";
   } catch (err) {
     console.error(err);
     alert("❌ Error al registrar el pedido.");
+  }
+});
+
+btnActualizar.addEventListener("click", async () => {
+  if (!pedidoOriginal) return;
+
+  const mozo = mozoselect.value;
+  if (!mozo) return alert("⚠️ Selecciona un mozo.");
+  if (productosPedido.length === 0) return alert("⚠️ Agrega productos.");
+
+  const total = productosPedido.reduce((acc, i) => acc + i.total, 0);
+
+  const pedido = {
+    mozos: mozo,
+    mesa: pedidoOriginal.mesa, // número de mesa, no ID
+    estado: pedidoOriginal.estado,
+    items: productosPedido,
+    total,
+    fecha: new Date()
+  };
+
+  try {
+    await PedidoModel.actualizarPedido(pedidoId, pedido);
+    alert("✅ Pedido actualizado.");
+    location.href = "detalle.html";
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error al actualizar el pedido.");
   }
 });
 
@@ -136,9 +175,43 @@ function resetFormulario() {
   precioInput.value = "";
   productosPedido = [];
   listaProductos.innerHTML = "";
+  mesaIdInput.value = "";
+  btnRegistrar.style.display = "inline-block";
+  btnActualizar.style.display = "none";
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  cargarMozos();
-  cargarProductos();
+window.addEventListener("DOMContentLoaded", async () => {
+  await cargarMozos();
+  await cargarProductos();
+
+  if (pedidoId) {
+    pedidoOriginal = await PedidoModel.obtenerPedidoPorId(pedidoId);
+    if (!pedidoOriginal) return alert("❌ Pedido no encontrado");
+
+    formulario.style.display = "block";
+    formulario.querySelector("h4").textContent = "Editar Pedido";
+
+    btnRegistrar.style.display = "none";
+    btnActualizar.style.display = "inline-block";
+
+    mozoselect.value = pedidoOriginal.mozos;
+    productosPedido = pedidoOriginal.items || [];
+
+    listaProductos.innerHTML = "";
+    productosPedido.forEach(item => {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${item.producto}</td>
+        <td>${item.precio.toFixed(2)}</td>
+        <td>${item.cantidad}</td>
+        <td>${item.total.toFixed(2)}</td>
+        <td><button class="btn btn-sm btn-danger">✕</button></td>
+      `;
+      fila.querySelector("button").addEventListener("click", () => {
+        productosPedido = productosPedido.filter(p => p !== item);
+        fila.remove();
+      });
+      listaProductos.appendChild(fila);
+    });
+  }
 });
