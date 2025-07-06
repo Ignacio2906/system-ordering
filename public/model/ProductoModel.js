@@ -1,4 +1,3 @@
-// modelo/ProductoModel.js
 import { db, storage } from "../conexion/firebase.js";
 import {
   collection,
@@ -22,7 +21,7 @@ export async function obtenerProductos() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-export async function agregarProducto(nombre, descripcion, precio, stock, archivo) {
+export async function agregarProducto(nombre, descripcion, precio, archivo) {
   const ruta = `productos/${Date.now()}-${archivo.name}`;
   const refArchivo = ref(storage, ruta);
   await uploadBytes(refArchivo, archivo);
@@ -32,8 +31,34 @@ export async function agregarProducto(nombre, descripcion, precio, stock, archiv
     nombre,
     descripcion,
     precio: parseFloat(precio),
-    stock: parseInt(stock),
     imagenURL: url
+  });
+}
+
+export async function actualizarProducto(id, nombre, descripcion, precio, archivo, imagenAnterior) {
+  let imagenURL = imagenAnterior;
+
+  if (archivo) {
+    const rutaNueva = `productos/${Date.now()}-${archivo.name}`;
+    const refArchivo = ref(storage, rutaNueva);
+    await uploadBytes(refArchivo, archivo);
+    imagenURL = await getDownloadURL(refArchivo);
+
+    // Eliminar imagen anterior
+    if (imagenAnterior) {
+      try {
+        await deleteObject(ref(storage, imagenAnterior));
+      } catch (e) {
+        console.warn("Error al eliminar imagen anterior:", e.message);
+      }
+    }
+  }
+
+  return await updateDoc(doc(db, "productos", id), {
+    nombre,
+    descripcion,
+    precio: parseFloat(precio),
+    imagenURL
   });
 }
 

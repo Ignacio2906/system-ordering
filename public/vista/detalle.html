@@ -26,10 +26,19 @@
   <div class="container py-5">
     <h3 class="mb-4">Listado de Pedidos</h3>
     <table id="tabla-detalle"></table>
+
+      <!-- Solo visible si es admin -->
+<div id="btn-exportar-excel-container" style="display: none;" class="mb-3">
+  <button id="btn-exportar-excel" class="btn btn-success">Exportar a Excel</button>
+</div>
   </div>
+
+
+
 
   <!-- Footer -->
   <div id="footer-placeholder"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
   <!-- Scripts JS necesarios -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

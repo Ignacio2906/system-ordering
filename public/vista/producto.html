@@ -24,8 +24,12 @@
       <!-- Formulario -->
       <div class="col-lg-4 mb-4">
         <div class="bg-secondary text-white p-4 rounded">
-          <h4 class="mb-4 text-uppercase">Agregar Producto</h4>
+          <h4 class="mb-4 text-uppercase" id="tituloFormulario">Agregar Producto</h4>
+
+          <div id="mensajeExito" class="alert alert-success d-none" role="alert"></div>
+
           <form id="formProducto" method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="productoId">
             <div class="form-group">
               <label for="txtnombre">Nombre Producto</label>
               <input type="text" id="txtnombre" name="nombre" class="form-control" required>
@@ -39,14 +43,13 @@
               <input type="number" step="0.01" min="0" id="txtprecio" name="precio" class="form-control" required>
             </div>
             <div class="form-group">
-              <label for="txtstock">Stock</label>
-              <input type="number" min="0" id="txtstock" name="stock" class="form-control" required>
-            </div>
-            <div class="form-group">
               <label for="imagenArchivo">Imagen del Producto</label>
-              <input type="file" name="imagen" id="imagenArchivo" class="form-control" accept="image/*" required />
+              <input type="file" name="imagen" id="imagenArchivo" class="form-control" accept="image/*" />
             </div>
-            <button type="submit" class="btn btn-primary mt-3 w-100">Agregar Producto</button>
+            <div class="d-grid gap-2 mt-3">
+              <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar Producto</button>
+              <button type="button" class="btn btn-secondary d-none" id="btnCancelar">Cancelar Edición</button>
+            </div>
           </form>
         </div>
       </div>
@@ -54,13 +57,12 @@
       <!-- Tabla -->
       <div class="col-lg-8">
         <div class="table-responsive">
-          <table id="tabla-productos">
+          <table id="tabla-productos" class="display nowrap w-100">
             <thead>
               <tr>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Precio</th>
-                <th>Stock</th>
                 <th>Imagen</th>
                 <th>Acciones</th>
               </tr>

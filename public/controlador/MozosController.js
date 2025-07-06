@@ -1,8 +1,8 @@
-// controlador/mozosController.js
 import {
   obtenermozos,
   agregarmozos,
-  eliminarmozos
+  eliminarmozos,
+  actualizarmozos
 } from "../model/MozosModel.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -23,8 +23,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       {
         data: null,
         title: "Acciones",
-        render: row =>
-          `<button class="btn btn-danger btn-sm eliminar" data-id="${row.id}">Eliminar</button>`
+        render: row => `
+          <button class="btn btn-primary btn-sm editar" data-id="${row.id}">Editar</button>
+          <button class="btn btn-danger btn-sm eliminar" data-id="${row.id}">Eliminar</button>
+        `
       }
     ]
   });
@@ -39,6 +41,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("formmozos").addEventListener("submit", async e => {
     e.preventDefault();
 
+    const form = e.target;
+    const editingId = form.dataset.editingId;
+
     const mozos = {
       dni: document.getElementById("txtdni").value,
       nombre: document.getElementById("txtnombre").value,
@@ -49,16 +54,67 @@ document.addEventListener("DOMContentLoaded", async () => {
       correo: document.getElementById("txtcorreo").value
     };
 
-    await agregarmozos(mozos);
+    if (editingId) {
+      await actualizarmozos(editingId, mozos);
+      mostrarMensaje("✅ Mozo fue actualizado correctamente");
+      delete form.dataset.editingId;
+    } else {
+      await agregarmozos(mozos);
+      mostrarMensaje("✅ Mozo fue agregado correctamente");
+    }
+
     await cargarmozos();
-    e.target.reset();
+    form.reset();
+    document.getElementById("btnSubmit").textContent = "Agregar Mozo";
+    document.getElementById("btnCancelar").classList.add("d-none");
   });
 
   $("#tabla-mozos tbody").on("click", ".eliminar", async function () {
     const id = $(this).data("id");
-    if (confirm("¿Eliminar mozos?")) {
+    if (confirm("¿Eliminar mozo?")) {
       await eliminarmozos(id);
       await cargarmozos();
+      mostrarMensaje("🗑️ Mozo fue eliminado correctamente");
     }
   });
+
+  $("#tabla-mozos tbody").on("click", ".editar", async function () {
+    const id = $(this).data("id");
+    const mozos = await obtenermozos();
+    const mozo = mozos.find(m => m.id === id);
+
+    if (!mozo) return mostrarMensaje("⚠️ Mozo no encontrado");
+
+    document.getElementById("txtdni").value = mozo.dni;
+    document.getElementById("txtnombre").value = mozo.nombre;
+    document.getElementById("txtapepat").value = mozo.apellidoPaterno;
+    document.getElementById("txtapemat").value = mozo.apellidoMaterno;
+    document.getElementById("txtdireccion").value = mozo.direccion;
+    document.getElementById("txttelefono").value = mozo.telefono;
+    document.getElementById("txtcorreo").value = mozo.correo;
+
+    document.getElementById("formmozos").dataset.editingId = id;
+    document.getElementById("btnSubmit").textContent = "Actualizar Mozo";
+    document.getElementById("btnCancelar").classList.remove("d-none");
+  });
+
+  document.getElementById("btnCancelar").addEventListener("click", () => {
+    const form = document.getElementById("formmozos");
+    form.reset();
+    delete form.dataset.editingId;
+    document.getElementById("btnSubmit").textContent = "Agregar Mozo";
+    document.getElementById("btnCancelar").classList.add("d-none");
+  });
+
+  // Mostrar mensaje flotante
+  function mostrarMensaje(mensaje) {
+    const alerta = document.getElementById("mensajeExito");
+    alerta.textContent = mensaje;
+    alerta.classList.remove("d-none");
+
+    setTimeout(() => {
+      alerta.classList.add("d-none");
+      alerta.textContent = "";
+    }, 3000);
+  }
 });

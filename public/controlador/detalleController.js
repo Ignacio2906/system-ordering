@@ -1,8 +1,8 @@
-// controlador/detalleController.js
 import DetalleModel from "../model/DetalleModel.js";
 import EstadoController from "./EstadoController.js";
 import { aplicarPermisos } from "./sessionCheck.js";
-import  PedidoModel from "../model/PedidoModel.js";
+import PedidoModel from "../model/PedidoModel.js";
+import { exportarTodosLosPedidosAExcel } from "./exportarExcel.js";
 
 let pedidos = [];
 let mozosMap = {};
@@ -18,10 +18,8 @@ async function init() {
     mozosMap[m.dni] = m.nombre;
   });
 
-  // Referencia al elemento <audio>
   sonido = document.getElementById("notificacion-audio");
 
-  // Inicializamos la tabla vacía
   tabla = $("#tabla-detalle").DataTable({
     data: [],
     columns: [
@@ -47,7 +45,13 @@ async function init() {
     }
   });
 
-  // Escuchar cambios en pedidos
+  if (rolUsuario === "admin") {
+    document.getElementById("btn-exportar-excel-container").style.display = "block";
+    document.getElementById("btn-exportar-excel").addEventListener("click", () => {
+      exportarTodosLosPedidosAExcel(pedidos, mozosMap);
+    });
+  }
+
   DetalleModel.escucharPedidos(nuevosPedidos => {
     detectarCambiosSonido(pedidos, nuevosPedidos);
     pedidos = nuevosPedidos;
@@ -59,12 +63,10 @@ function detectarCambiosSonido(previos, actuales) {
   for (const actual of actuales) {
     const previo = previos.find(p => p.id === actual.id);
     if (!previo) {
-      // nuevo pedido
       if (rolUsuario === "cocinero" && actual.estado === "pendiente") {
         sonido?.play();
       }
     } else if (previo.estado !== actual.estado) {
-      // cambio de estado
       if (rolUsuario === "cocinero" && actual.estado === "pendiente") {
         sonido?.play();
       } else if (rolUsuario === "mozo" && actual.estado === "creado") {
@@ -108,7 +110,6 @@ window.editarPedido = function (id) {
   window.location.href = `pedido.html?edit=${id}`;
 };
 
-
 window.eliminarPedido = async function (id) {
   if (!confirm("¿Deseas eliminar este pedido?")) return;
   await DetalleModel.eliminarPedido(id);
@@ -140,70 +141,5 @@ window.exportarPDF = async function (id) {
   doc.text(`Total: S/ ${pedido.total.toFixed(2)}`, 10, doc.lastAutoTable.finalY + 10);
   doc.save(`pedido-${id}.pdf`);
 };
-
-window.addEventListener("DOMContentLoaded", async () => {
-    const pedidoId = sessionStorage.getItem("pedidoEditar");
-  if (pedidoId) {
-    const pedido = await PedidoModel.obtenerPedidoPorId(pedidoId);
-    sessionStorage.removeItem("pedidoEditar");
-
-    if (pedido) {
-      // Abrir el formulario flotante
-      formulario.style.display = "block";
-
-      // Rellenar el formulario con datos del pedido
-      mesaIdInput.value = ""; // en edición no cambiamos la mesa
-      mozoselect.value = pedido.mozos || "";
-      productosPedido = pedido.items || [];
-
-      listaProductos.innerHTML = "";
-      productosPedido.forEach(item => {
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${item.producto}</td>
-          <td>${item.precio.toFixed(2)}</td>
-          <td>${item.cantidad}</td>
-          <td>${item.total.toFixed(2)}</td>
-          <td><button class="btn btn-sm btn-danger">✕</button></td>
-        `;
-        fila.querySelector("button").addEventListener("click", () => {
-          productosPedido = productosPedido.filter(p => p !== item);
-          fila.remove();
-        });
-        listaProductos.appendChild(fila);
-      });
-
-      // Modificamos el botón de registrar para actualizar
-      btnRegistrar.textContent = "Actualizar Pedido";
-      btnRegistrar.onclick = async () => {
-        const mozo = mozoselect.value;
-        if (!mozo) return alert("⚠️ Selecciona un mozo.");
-        if (productosPedido.length === 0) return alert("⚠️ Agrega al menos un producto.");
-
-        const total = productosPedido.reduce((acc, i) => acc + i.total, 0);
-        const datosEditados = {
-          mozos: mozo,
-          items: productosPedido,
-          total,
-          estado: pedido.estado,
-          mesa: pedido.mesa,
-          fecha: new Date()
-        };
-
-        try {
-          await PedidoModel.actualizarPedido(pedidoId, datosEditados);
-          alert("✅ Pedido actualizado.");
-          formulario.style.display = "none";
-          resetFormulario();
-          btnRegistrar.textContent = "Registrar Pedido";
-        } catch (err) {
-          console.error(err);
-          alert("❌ Error al actualizar el pedido.");
-        }
-      };
-    }
-  }
-});
-
 
 window.addEventListener("DOMContentLoaded", init);

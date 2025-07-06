@@ -1,4 +1,3 @@
-// model/mozosModel.js
 import { db } from "../conexion/firebase.js";
 import {
   collection,
@@ -6,6 +5,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  setDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
@@ -16,13 +16,21 @@ export async function obtenermozos() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-export async function agregarmozos(mozos) {
+export async function agregarmozos(mozo) {
   return await addDoc(mozosRef, {
-    ...mozos,
+    ...mozo,
     createdAt: serverTimestamp()
   });
 }
 
 export async function eliminarmozos(id) {
   return await deleteDoc(doc(db, "mozos", id));
+}
+
+export async function actualizarmozos(id, mozo) {
+  const mozoRef = doc(db, "mozos", id);
+  return await setDoc(mozoRef, {
+    ...mozo,
+    updatedAt: serverTimestamp()
+  });
 }
