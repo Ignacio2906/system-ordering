@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Detalle de Pedidos | CHIFA CONTINENTAL</title>
+
+  <!-- Librerías para exportar PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.5.28"></script>
+
+  <!-- Estilos DataTables -->
+  <link rel="stylesheet" href="/assets/datatables/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="/assets/datatables/responsive.dataTables.min.css" />
+
+  <!-- Carga dinámica del head adicional -->
+  <script>
+    fetch('/vista/Main/mainhead.html')
+      .then(res => res.text())
+      .then(data => {
+        const temp = document.createElement('div');
+        temp.innerHTML = data;
+        [...temp.children].forEach(child => document.head.appendChild(child));
+      })
+      .catch(err => console.error('Error al cargar mainhead.html:', err));
+  </script>
+</head>
+<body>
+  <!-- Navbar -->
+  <div id="navbar-placeholder"></div>
+
+  <!-- Contenido -->
+  <div class="container py-5">
+    <h3 class="mb-4">Listado de Pedidos</h3>
+    
+    <div class="table-responsive">
+      <table id="tabla-detalle" class="display nowrap" style="width:100%"></table>
+    </div>
+
+    <!-- Botón de exportar -->
+    <div id="btn-exportar-excel-container" style="display: none;" class="mt-4">
+      <button id="btn-exportar-excel" class="btn btn-success">
+        Exportar a Excel
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Librerías externas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/assets/datatables/jquery.dataTables.min.js"></script>
+  <script src="/assets/datatables/dataTables.responsive.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- Scripts personalizados con rutas absolutas -->
+  <script type="module" src="/controlador/layoutLoaderController.js"></script>
+  <script type="module" src="/controlador/detalleController.js"></script>
+  <script type="module" src="/model/DetalleModel.js"></script>
+
+  <!-- Notificación sonora -->
+  <audio id="notificacion-audio" src="/assets/sounds/notificacion.mp3" preload="auto"></audio>
+</body>
+</html>

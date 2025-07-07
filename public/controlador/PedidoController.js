@@ -1,4 +1,4 @@
-import PedidoModel from "../model/PedidoModel.js";
+import PedidoModel from "../model/PedidoModel.js"; // ← CORREGIDO
 
 const formulario = document.getElementById("formulario-pedido");
 const mesaContainer = document.getElementById("mesas-container");
@@ -151,7 +151,7 @@ btnActualizar.addEventListener("click", async () => {
 
   const pedido = {
     mozos: mozo,
-    mesa: pedidoOriginal.mesa, // número de mesa, no ID
+    mesa: pedidoOriginal.mesa,
     estado: pedidoOriginal.estado,
     items: productosPedido,
     total,

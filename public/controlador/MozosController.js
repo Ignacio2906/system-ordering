@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     responsive: true,
     destroy: true,
     language: {
-      url: "../assets/datatables/es.json"
+      url: "../../assets/datatables/es.json"  // ← Ruta corregida
     },
     columns: [
       { data: "dni", title: "DNI" },

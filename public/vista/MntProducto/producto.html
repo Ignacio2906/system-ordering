@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
   <title>Productos | CHIFA CONTINENTAL</title>
-  <link rel="stylesheet" href="../assets/datatables/jquery.dataTables.min.css" />
-  <link rel="stylesheet" href="../assets/datatables/responsive.dataTables.min.css" />
+  <link rel="stylesheet" href="../../assets/datatables/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="../../assets/datatables/responsive.dataTables.min.css" />
 
   <script>
-    fetch('../mainhead.html')
+    fetch('../../vista/Main/mainhead.html')
       .then(res => res.text())
       .then(data => {
         document.head.innerHTML += data;
@@ -78,11 +78,11 @@
   <div id="footer-placeholder"></div>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="../assets/datatables/jquery.dataTables.min.js"></script>
-  <script src="../assets/datatables/dataTables.responsive.min.js"></script>
+  <script src="../../assets/datatables/jquery.dataTables.min.js"></script>
+  <script src="../../assets/datatables/dataTables.responsive.min.js"></script>
 
-  <script type="module" src="../controlador/ProductoController.js"></script>
-  <script type="module" src="../model/ProductoModel.js"></script>
-  <script type="module" src="../controlador/layoutLoader.js"></script>
+  <script type="module" src="../../controlador/ProductoController.js"></script>
+  <script type="module" src="../../model/ProductoModel.js"></script>
+  <script type="module" src="../../controlador/layoutLoaderController.js"></script>
 </body>
 </html>

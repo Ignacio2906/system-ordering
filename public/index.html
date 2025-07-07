@@ -1,47 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ingreso de Usuario</title>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" />
-  <link href="./css/estiloLogin.css" rel="stylesheet" />
-</head>
-<body>
-  <div class="container">
-    <div class="card card-login mx-auto text-center">
-      <div class="card-header">
-        <h1 class="text-white font-weight-bold mb-4">Ingresar Usuario</h1>
-        <img src="./img/logo.jpeg" class="logo-img" alt="Logo" />
-      </div>
-      <div class="card-body">
-        <form onsubmit="loginUser(event)">
-          <div class="form-group">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-user"></i></span>
-              </div>
-              <input type="email" id="txtusuario" autocomplete="username" class="form-control" placeholder="Correo electrónico" required />
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inicio</title>
+    <script type="module">
+      // Cargar contenido común del head (estilos, metas, etc.)
+      fetch('/vista/Main/mainhead.html')
+        .then(res => res.text())
+        .then(data => {
+          document.head.innerHTML += data;
+        });
+    </script>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <div id="navbar-wrapper" style="display: none;">
+      <div id="navbar-placeholder"></div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="container mt-5">
+      <h1>Bienvenido a CHIFA CONTINENTAL</h1>
+    </div>
+
+    <div class="container-fluid py-5">
+      <div class="container">
+        <div class="section-title">
+          <h4 class="text-primary text-uppercase" style="letter-spacing: 5px;">Nuestra Historia</h4>
+          <h1 class="display-4">Sabores Orientales desde 1985</h1>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 py-0 py-lg-5">
+            <h1 class="mb-3">Tradición y Cultura</h1>
+            <p>En CHIFA CONTINENTAL, cada plato cuenta una historia.</p>
+            <a href="/vista/MntIndex/catalogo.html" class="btn btn-secondary font-weight-bold py-2 px-4 mt-2">Ver Menú</a>
+          </div>
+          <div class="col-lg-4 py-5 py-lg-0">
+            <div class="position-relative h-100">
+              <img class="position-absolute w-100 h-100" src="/img/logo.jpeg" style="object-fit: cover;" alt="Logo">
             </div>
           </div>
-
-          <div class="form-group">
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><i class="fas fa-key"></i></span>
-              </div>
-              <input type="password" id="txtpassword" autocomplete="current-password" class="form-control" placeholder="Contraseña" required />
-            </div>
+          <div class="col-lg-4 py-0 py-lg-5">
+            <h1 class="mb-3">Nuestra Visión</h1>
+            <p>Ser el chifa preferido por las familias.</p>
           </div>
-
-          <div class="form-group">
-            <input type="submit" value="Ingresar" class="btn btn-primary login_btn" />
-          </div>
-        </form>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script type="module" src="./controlador/loginController.js"></script>
-</body>
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts Base -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts para navbar y permisos -->
+    <script type="module">
+      import { aplicarPermisos } from "/controlador/sessionCheckController.js";
+      import "/controlador/layoutLoaderController.js";
+
+      aplicarPermisos(); // Oculta/visualiza menú según sesión y rol
+    </script>
+  </body>
 </html>

@@ -11,11 +11,13 @@ import {
   onSnapshot,
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
+// Referencias a las colecciones
 const pedidosRef = collection(db, "pedidos");
 const mozosRef = collection(db, "mozos");
 const productosRef = collection(db, "productos");
 const mesasRef = collection(db, "mesas");
 
+// Agrega un nuevo pedido
 async function agregarPedido(pedido) {
   return await addDoc(pedidosRef, {
     ...pedido,
@@ -23,6 +25,7 @@ async function agregarPedido(pedido) {
   });
 }
 
+// Actualiza un pedido existente
 async function actualizarPedido(id, pedidoData) {
   const pedidoDoc = doc(db, "pedidos", id);
   return await updateDoc(pedidoDoc, {
@@ -31,39 +34,46 @@ async function actualizarPedido(id, pedidoData) {
   });
 }
 
+// Cambia el estado de un pedido (ej. de "pendiente" a "servido")
 async function actualizarEstado(id, nuevoEstado) {
   const pedidoDoc = doc(db, "pedidos", id);
   return await updateDoc(pedidoDoc, { estado: nuevoEstado });
 }
 
+// Cambia el estado de una mesa (ej. de "libre" a "ocupado")
 async function actualizarMesa(id, nuevoEstado) {
-  const ref = doc(db, "mesas", id);
-  return await updateDoc(ref, {
+  const mesaDoc = doc(db, "mesas", id);
+  return await updateDoc(mesaDoc, {
     estado_mesa: nuevoEstado
   });
 }
 
+// Obtiene un pedido por su ID
 async function obtenerPedidoPorId(id) {
-  const docRef = doc(db, "pedidos", id);
-  const snap = await getDoc(docRef);
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  const pedidoDoc = doc(db, "pedidos", id);
+  const snapshot = await getDoc(pedidoDoc);
+  return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
 }
 
+// Lista todos los mozos
 async function obtenerMozos() {
   const snapshot = await getDocs(mozosRef);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
+// Lista todos los productos
 async function obtenerProductos() {
   const snapshot = await getDocs(productosRef);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
+// Lista todas las mesas
 async function obtenerMesas() {
   const snapshot = await getDocs(mesasRef);
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
+// Escucha en tiempo real los cambios en las mesas
 function escucharMesas(callback) {
   return onSnapshot(mesasRef, snapshot => {
     const mesas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

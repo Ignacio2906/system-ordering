@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <meta charset="UTF-8" />
   <title>Pedidos | CHIFA CONTINENTAL</title>
-  <link rel="stylesheet" href="../css/mesas.css" />
+  <link rel="stylesheet" href="/css/mesas.css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+
+  <!-- Carga dinámica del head adicional (librerías y estilos) -->
   <script>
-    fetch('../mainhead.html')
+    fetch('/vista/Main/mainhead.html')
       .then(res => res.text())
-      .then(data => { document.head.innerHTML += data; });
+      .then(data => {
+        const temp = document.createElement('div');
+        temp.innerHTML = data;
+        [...temp.children].forEach(child => document.head.appendChild(child));
+      })
+      .catch(err => console.error('Error al cargar mainhead.html:', err));
   </script>
 </head>
+
 <body>
+  <!-- Navbar cargado dinámicamente -->
   <div id="navbar-placeholder"></div>
 
   <div class="container py-4">
     <h2 class="text-center mb-4">Seleccione una mesa</h2>
     <div id="mesas-container" class="mesas-grid"></div>
 
-    <!-- Formulario flotante -->
+    <!-- Formulario flotante para pedidos -->
     <div id="formulario-pedido" class="formulario-flotante">
       <button id="cerrar-formulario" class="btn btn-sm btn-danger cerrar-form">✕</button>
       <form onsubmit="return false;">
@@ -46,22 +57,33 @@
         <button type="button" id="btn-agregar-producto" class="btn btn-info mt-2 w-100">Agregar Producto</button>
 
         <table class="table table-sm mt-3 text-white">
-          <thead><tr><th>Producto</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th><th></th></tr></thead>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
           <tbody id="lista-productos"></tbody>
         </table>
 
         <button type="submit" id="btn-registrar" class="btn btn-success mt-2 w-100">Registrar Pedido</button>
-        <button type="submit" id="btn-actualizar" class="btn btn-primary" style="display: none;">Actualizar Pedido</button>
-
+        <button type="submit" id="btn-actualizar" class="btn btn-primary mt-2 w-100" style="display: none;">Actualizar Pedido</button>
       </form>
     </div>
   </div>
 
+  <!-- Footer dinámico -->
   <div id="footer-placeholder"></div>
 
+  <!-- Librerías externas -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script type="module" src="../model/PedidoModel.js"></script>
-  <script type="module" src="../controlador/PedidoController.js"></script>
-  <script type="module" src="../controlador/layoutLoader.js"></script>
+
+  <!-- JS módulos con rutas absolutas -->
+  <script type="module" src="/model/PedidoModel.js"></script>
+  <script type="module" src="/controlador/PedidoController.js"></script>
+  <script type="module" src="/controlador/layoutLoaderController.js"></script>
 </body>
 </html>

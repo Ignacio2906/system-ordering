@@ -1,6 +1,6 @@
 import DetalleModel from "../model/DetalleModel.js";
 import EstadoController from "./EstadoController.js";
-import { aplicarPermisos } from "./sessionCheck.js";
+import { aplicarPermisos } from "./sessionCheckController.js";
 import PedidoModel from "../model/PedidoModel.js";
 import { exportarTodosLosPedidosAExcel } from "./exportarExcel.js";
 
@@ -33,7 +33,7 @@ async function init() {
     ],
     responsive: true,
     language: {
-      url: "../assets/datatables/es.json"
+      url: "../../assets/datatables/es.json"
     },
     drawCallback: function () {
       $(".dataTable")

@@ -11,22 +11,26 @@ export async function aplicarPermisos() {
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
         console.warn("⚠️ Usuario no autenticado");
-        window.location.href = "/login.html";
+        window.location.href = "/vista/MntLogin/Login.html";
         return reject("No autenticado");
       }
 
       const uid = user.uid;
+      console.log("🔐 Usuario autenticado. UID:", uid);
+
       const docRef = doc(db, "usuario", uid);
       const snap = await getDoc(docRef);
 
       if (!snap.exists()) {
-        console.warn("⚠️ Usuario sin rol en Firestore. Redirigiendo.");
+        console.warn("⚠️ Usuario sin datos en Firestore. Cerrando sesión.");
         auth.signOut();
-        window.location.href = "/login.html";
+        window.location.href = "/vista/MntLogin/Login.html";
         return reject("Sin rol");
       }
 
-      const rol = snap.data().rol;
+      const data = snap.data();
+      const rol = data.rol;
+      console.log("✅ Rol obtenido desde Firestore:", rol);
 
       const permisos = {
         "menu-inicio": ["admin", "mozo", "cocinero"],
@@ -38,13 +42,25 @@ export async function aplicarPermisos() {
 
       for (const [id, roles] of Object.entries(permisos)) {
         const el = document.getElementById(id);
-        if (el && !roles.includes(rol)) {
-          el.style.display = "none";
+        if (el) {
+          if (!roles.includes(rol)) {
+            el.style.display = "none";
+            console.log(`🚫 Ocultando menú '${id}' para rol '${rol}'`);
+          } else {
+            console.log(`✅ Mostrando menú '${id}' para rol '${rol}'`);
+          }
+        } else {
+          console.warn(`⚠️ Elemento con ID '${id}' no encontrado en el DOM`);
         }
       }
 
       const wrapper = document.getElementById("navbar-wrapper");
-      if (wrapper) wrapper.style.display = "block";
+      if (wrapper) {
+        wrapper.style.display = "block";
+        console.log("✅ Navbar mostrado.");
+      } else {
+        console.warn("⚠️ No se encontró 'navbar-wrapper' en el DOM");
+      }
 
       resolve();
     });
