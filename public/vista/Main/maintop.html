@@ -1,4 +1,4 @@
-<!-- NAVBAR CON BOTÓN DE INICIO DE SESIÓN -->
+<!-- NAVBAR CON BOTÓN DE INICIO/CERRAR SESIÓN -->
 <!-- Contenedor requerido para que sessionCheckController.js lo reconozca -->
 <div id="navbar-wrapper">
   <div class="container-fluid p-0 nav-bar">
@@ -16,15 +16,28 @@
           <a href="/vista/MntProducto/producto.html" class="nav-item nav-link" id="menu-producto">Productos</a>
           <a href="/vista/MntPedido/pedido.html" class="nav-item nav-link" id="menu-pedido">Pedidos</a>
           <a href="/vista/MntDetalle/detalle.html" class="nav-item nav-link" id="menu-detalle">Detalle</a>
-          <a href="/vista/MntLogin/Login.html" class="nav-item nav-link btn btn-outline-light ml-3 px-3 py-1" style="border-radius: 20px;">
+
+          <!-- Botón Login -->
+          <a href="/vista/MntLogin/Login.html"
+             id="btn-login"
+             class="nav-item nav-link btn btn-outline-light ml-3 px-3 py-1"
+             style="border-radius: 20px;">
             Iniciar Sesión
           </a>
+
+          <!-- Botón Logout -->
+          <a href="#"
+             id="btn-logout"
+             class="nav-item nav-link btn btn-outline-warning ml-3 px-3 py-1 d-none"
+             style="border-radius: 20px;">
+            Cerrar Sesión
+          </a>
+
         </div>
       </div>
     </nav>
   </div>
 </div>
-
 
 <!-- ENCABEZADO DE PÁGINA -->
 <div class="container-fluid page-header mb-5 position-relative">
