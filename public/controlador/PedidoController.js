@@ -152,7 +152,7 @@ btnActualizar.addEventListener("click", async () => {
   const pedido = {
     mozos: mozo,
     mesa: pedidoOriginal.mesa,
-    estado: pedidoOriginal.estado,
+    estado: "pendiente",
     items: productosPedido,
     total,
     fecha: new Date()
@@ -161,7 +161,7 @@ btnActualizar.addEventListener("click", async () => {
   try {
     await PedidoModel.actualizarPedido(pedidoId, pedido);
     alert("✅ Pedido actualizado.");
-    location.href = "detalle.html";
+    location.href = "../MntDetalle/detalle.html";
   } catch (err) {
     console.error(err);
     alert("❌ Error al actualizar el pedido.");

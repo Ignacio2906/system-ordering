@@ -30,6 +30,7 @@ async function actualizarPedido(id, pedidoData) {
   const pedidoDoc = doc(db, "pedidos", id);
   return await updateDoc(pedidoDoc, {
     ...pedidoData,
+    estado: "pendiente", 
     fecha: serverTimestamp()
   });
 }
