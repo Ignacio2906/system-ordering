@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     responsive: true,
     destroy: true,
     language: {
-      url: "../../assets/datatables/es.json"  // ← Ruta corregida
+      url: "../../assets/datatables/es.json"
     },
     columns: [
       { data: "dni", title: "DNI" },
@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await cargarmozos();
 
+  // Enviar formulario
   document.getElementById("formmozos").addEventListener("submit", async e => {
     e.preventDefault();
 
@@ -45,39 +46,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     const editingId = form.dataset.editingId;
 
     const mozos = {
-      dni: document.getElementById("txtdni").value,
-      nombre: document.getElementById("txtnombre").value,
-      apellidoPaterno: document.getElementById("txtapepat").value,
-      apellidoMaterno: document.getElementById("txtapemat").value,
-      direccion: document.getElementById("txtdireccion").value,
-      telefono: document.getElementById("txttelefono").value,
-      correo: document.getElementById("txtcorreo").value
+      dni: document.getElementById("txtdni").value.trim(),
+      nombre: document.getElementById("txtnombre").value.trim(),
+      apellidoPaterno: document.getElementById("txtapepat").value.trim(),
+      apellidoMaterno: document.getElementById("txtapemat").value.trim(),
+      direccion: document.getElementById("txtdireccion").value.trim(),
+      telefono: document.getElementById("txttelefono").value.trim(),
+      correo: document.getElementById("txtcorreo").value.trim()
     };
 
-    if (editingId) {
-      await actualizarmozos(editingId, mozos);
-      mostrarMensaje("✅ Mozo fue actualizado correctamente");
-      delete form.dataset.editingId;
-    } else {
-      await agregarmozos(mozos);
-      mostrarMensaje("✅ Mozo fue agregado correctamente");
-    }
+    try {
+      if (editingId) {
+        await actualizarmozos(editingId, mozos);
+        mostrarMensaje("✅ Mozo actualizado correctamente");
+        delete form.dataset.editingId;
+      } else {
+        await agregarmozos(mozos);
+        mostrarMensaje("✅ Mozo agregado correctamente");
+      }
 
-    await cargarmozos();
-    form.reset();
-    document.getElementById("btnSubmit").textContent = "Agregar Mozo";
-    document.getElementById("btnCancelar").classList.add("d-none");
+      await cargarmozos();
+      form.reset();
+      document.getElementById("btnSubmit").textContent = "Agregar Mozo";
+      document.getElementById("btnCancelar").classList.add("d-none");
+    } catch (error) {
+      console.error("Error al guardar:", error);
+      mostrarMensaje("❌ Ocurrió un error");
+    }
   });
 
+  // Eliminar mozo
   $("#tabla-mozos tbody").on("click", ".eliminar", async function () {
     const id = $(this).data("id");
     if (confirm("¿Eliminar mozo?")) {
       await eliminarmozos(id);
       await cargarmozos();
-      mostrarMensaje("🗑️ Mozo fue eliminado correctamente");
+      mostrarMensaje("🗑️ Mozo eliminado correctamente");
     }
   });
 
+  // Editar mozo
   $("#tabla-mozos tbody").on("click", ".editar", async function () {
     const id = $(this).data("id");
     const mozos = await obtenermozos();
@@ -98,6 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("btnCancelar").classList.remove("d-none");
   });
 
+  // Cancelar edición
   document.getElementById("btnCancelar").addEventListener("click", () => {
     const form = document.getElementById("formmozos");
     form.reset();
@@ -106,15 +115,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("btnCancelar").classList.add("d-none");
   });
 
-  // Mostrar mensaje flotante
+  // Mensaje tipo toast con Bootstrap
   function mostrarMensaje(mensaje) {
-    const alerta = document.getElementById("mensajeExito");
-    alerta.textContent = mensaje;
-    alerta.classList.remove("d-none");
+    const toastElement = document.getElementById('toastMensaje');
+    const toastBody = document.getElementById('toastMensajeTexto');
 
-    setTimeout(() => {
-      alerta.classList.add("d-none");
-      alerta.textContent = "";
-    }, 3000);
+    toastBody.textContent = mensaje;
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
   }
 });

@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tabla = $("#tabla-productos").DataTable({
     responsive: true,
     language: {
-      url: "../assets/datatables/es.json"
+      url: "../../assets/datatables/es.json"
     },
     columns: [
       { data: "nombre" },
@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       { data: "precio" },
       {
         data: "imagenURL",
-        render: url => `<img src="${url}" width="60" height="60" style="object-fit:cover;border-radius:5px" />`
+        render: url =>
+          `<img src="${url}" width="60" height="60" style="object-fit:cover;border-radius:5px" />`
       },
       {
         data: null,
@@ -53,24 +54,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     const descripcion = document.getElementById("txtdescripcion").value;
     const precio = document.getElementById("txtprecio").value;
 
-    if (modoEdicion) {
-      await actualizarProducto(idEdicion, nombre, descripcion, precio, archivo, imagenAnterior);
-      mostrarMensaje("Producto actualizado correctamente");
-    } else {
-      if (!archivo) return alert("Selecciona una imagen");
-      await agregarProducto(nombre, descripcion, precio, archivo);
-      mostrarMensaje("Producto agregado correctamente");
+    if (!modoEdicion && !archivo) {
+      mostrarMensaje("Selecciona una imagen para el producto.");
+      return;
     }
 
-    await cargarProductos();
-    e.target.reset();
-    salirModoEdicion();
+    try {
+      if (modoEdicion) {
+        await actualizarProducto(idEdicion, nombre, descripcion, precio, archivo, imagenAnterior);
+        mostrarMensaje("Producto actualizado correctamente");
+      } else {
+        await agregarProducto(nombre, descripcion, precio, archivo);
+        mostrarMensaje("Producto agregado correctamente");
+      }
+
+      await cargarProductos();
+      e.target.reset();
+      salirModoEdicion();
+    } catch (error) {
+      mostrarMensajeError("Error al guardar el producto.");
+      console.error(error);
+    }
   });
 
   $("#tabla-productos tbody").on("click", ".eliminar", async function () {
     const id = $(this).data("id");
-    await deleteDoc(doc(db, "productos", id));
-    await cargarProductos();
+    const fila = tabla.row($(this).parents("tr")).data();
+
+    const confirmar = confirm("¿Estás seguro de eliminar este producto?");
+    if (!confirmar) return;
+
+    try {
+      await eliminarProducto(id, fila.imagenURL);
+      await cargarProductos();
+      mostrarMensaje("Producto eliminado correctamente");
+    } catch (error) {
+      mostrarMensajeError("Error al eliminar el producto.");
+      console.error(error);
+    }
   });
 
   $("#tabla-productos tbody").on("click", ".editar", function () {
@@ -105,9 +126,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   function mostrarMensaje(mensaje) {
     const alerta = document.getElementById("mensajeExito");
     alerta.textContent = mensaje;
-    alerta.classList.remove("d-none");
+    alerta.classList.remove("d-none", "alert-danger");
+    alerta.classList.add("alert-success");
     setTimeout(() => {
       alerta.classList.add("d-none");
+      alerta.textContent = "";
+    }, 3000);
+  }
+
+  function mostrarMensajeError(mensaje) {
+    const alerta = document.getElementById("mensajeExito");
+    alerta.textContent = mensaje;
+    alerta.classList.remove("d-none", "alert-success");
+    alerta.classList.add("alert-danger");
+    setTimeout(() => {
+      alerta.classList.add("d-none");
+      alerta.classList.remove("alert-danger");
+      alerta.classList.add("alert-success");
       alerta.textContent = "";
     }, 3000);
   }

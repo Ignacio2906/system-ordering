@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Mozos | CHIFA CONTINENTAL</title>
 
-  <!-- DataTables CSS (rutas corregidas) -->
+  <!-- DataTables CSS -->
   <link rel="stylesheet" href="../../assets/datatables/jquery.dataTables.min.css" />
   <link rel="stylesheet" href="../../assets/datatables/responsive.dataTables.min.css" />
 
-  <!-- Bootstrap (para estilos bonitos) -->
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-  <!-- Estilo personalizado -->
   <style>
     .d-none {
       display: none !important;
@@ -41,25 +40,22 @@
         <div class="bg-secondary text-white p-4 rounded">
           <h4 class="mb-4 text-uppercase">Agregar mozos</h4>
 
-          <!-- Mensaje flotante -->
-          <div id="mensajeExito" class="alert alert-success d-none" role="alert"></div>
-
           <form id="formmozos">
             <div class="form-group mb-2">
               <label>DNI</label>
-              <input type="text" id="txtdni" class="form-control" required>
+              <input type="text" id="txtdni" class="form-control" required maxlength="8" pattern="^[0-9]{8}$" title="Debe tener exactamente 8 dígitos">
             </div>
             <div class="form-group mb-2">
               <label>Nombre</label>
-              <input type="text" id="txtnombre" class="form-control" required>
+              <input type="text" id="txtnombre" class="form-control" required maxlength="30" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo letras y espacios">
             </div>
             <div class="form-group mb-2">
               <label>Apellido Paterno</label>
-              <input type="text" id="txtapepat" class="form-control" required>
+              <input type="text" id="txtapepat" class="form-control" required maxlength="30" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo letras y espacios">
             </div>
             <div class="form-group mb-2">
               <label>Apellido Materno</label>
-              <input type="text" id="txtapemat" class="form-control" required>
+              <input type="text" id="txtapemat" class="form-control" required maxlength="30" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+" title="Solo letras y espacios">
             </div>
             <div class="form-group mb-2">
               <label>Dirección</label>
@@ -67,7 +63,7 @@
             </div>
             <div class="form-group mb-2">
               <label>Teléfono</label>
-              <input type="text" id="txttelefono" class="form-control" required>
+              <input type="text" id="txttelefono" class="form-control" required maxlength="9" pattern="^[0-9]{9}$" title="Debe tener exactamente 9 dígitos">
             </div>
             <div class="form-group mb-3">
               <label>Correo</label>
@@ -105,17 +101,26 @@
     </div>
   </div>
 
+  <!-- Toast de mensaje -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="toastMensaje" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toastMensajeTexto"></div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <div id="footer-placeholder"></div>
 
-  <!-- jQuery -->
+  <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
-  <!-- DataTables JS (rutas corregidas) -->
   <script src="../../assets/datatables/jquery.dataTables.min.js"></script>
   <script src="../../assets/datatables/dataTables.responsive.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Scripts personalizados -->
+  <!-- Controladores -->
   <script type="module" src="../../model/MozosModel.js"></script>
   <script type="module" src="../../controlador/MozosController.js"></script>
   <script type="module" src="../../controlador/layoutLoaderController.js"></script>

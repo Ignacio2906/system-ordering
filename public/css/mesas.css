@@ -2,21 +2,21 @@
 .mesas-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 26px;
   justify-content: center;
   margin-top: 24px;
 }
 
 .mesa {
-  width: 80px;
-  height: 80px;
+  width: 150px;
+  height: 150px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 30px;
   cursor: pointer;
   transition: transform 0.2s;
 }

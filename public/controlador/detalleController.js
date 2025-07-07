@@ -107,7 +107,7 @@ function generarBotones(pedido) {
 }
 
 window.editarPedido = function (id) {
-  window.location.href = `pedido.html?edit=${id}`;
+  window.location.href = `MntPedido/pedido.html?edit=${id}`;
 };
 
 window.eliminarPedido = async function (id) {
