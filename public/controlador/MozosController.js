@@ -60,9 +60,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         await actualizarmozos(editingId, mozos);
         mostrarMensaje("✅ Mozo actualizado correctamente");
         delete form.dataset.editingId;
+        console.log("🛠️ Mozo actualizado:", mozos);
       } else {
         await agregarmozos(mozos);
         mostrarMensaje("✅ Mozo agregado correctamente");
+        console.log("➕ Mozo agregado:", mozos);
       }
 
       await cargarmozos();
@@ -70,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("btnSubmit").textContent = "Agregar Mozo";
       document.getElementById("btnCancelar").classList.add("d-none");
     } catch (error) {
-      console.error("Error al guardar:", error);
+      console.error("❌ Error al guardar:", error);
       mostrarMensaje("❌ Ocurrió un error");
     }
   });
@@ -81,6 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (confirm("¿Eliminar mozo?")) {
       await eliminarmozos(id);
       await cargarmozos();
+      console.log(`🗑️ Mozo eliminado (ID: ${id})`);
       mostrarMensaje("🗑️ Mozo eliminado correctamente");
     }
   });
@@ -104,6 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("formmozos").dataset.editingId = id;
     document.getElementById("btnSubmit").textContent = "Actualizar Mozo";
     document.getElementById("btnCancelar").classList.remove("d-none");
+    console.log("✏️ Editando mozo:", mozo);
   });
 
   // Cancelar edición
@@ -113,6 +117,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     delete form.dataset.editingId;
     document.getElementById("btnSubmit").textContent = "Agregar Mozo";
     document.getElementById("btnCancelar").classList.add("d-none");
+    console.log("❌ Edición cancelada");
   });
 
   // Mensaje tipo toast con Bootstrap

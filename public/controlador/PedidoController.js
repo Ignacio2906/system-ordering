@@ -1,4 +1,4 @@
-import PedidoModel from "../model/PedidoModel.js"; // ← CORREGIDO
+import PedidoModel from "../model/PedidoModel.js"; 
 
 const formulario = document.getElementById("formulario-pedido");
 const mesaContainer = document.getElementById("mesas-container");
@@ -100,9 +100,11 @@ btnAgregarProducto.addEventListener("click", () => {
   fila.querySelector("button").addEventListener("click", () => {
     productosPedido = productosPedido.filter(p => p !== item);
     fila.remove();
+    actualizarTotal();
   });
   listaProductos.appendChild(fila);
 
+  actualizarTotal();
   cantidadInput.value = "";
   precioInput.value = "";
   productoSelect.value = "";
@@ -180,12 +182,19 @@ function resetFormulario() {
   btnActualizar.style.display = "none";
 }
 
+function actualizarTotal() {
+  const total = productosPedido.reduce((acc, item) => acc + item.total, 0);
+  const totalEl = document.getElementById("total-pedido");
+  if (totalEl) totalEl.textContent = `Total: S/ ${total.toFixed(2)}`;
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
   await cargarMozos();
   await cargarProductos();
 
   if (pedidoId) {
     pedidoOriginal = await PedidoModel.obtenerPedidoPorId(pedidoId);
+
     if (!pedidoOriginal) return alert("❌ Pedido no encontrado");
 
     formulario.style.display = "block";
@@ -210,8 +219,11 @@ window.addEventListener("DOMContentLoaded", async () => {
       fila.querySelector("button").addEventListener("click", () => {
         productosPedido = productosPedido.filter(p => p !== item);
         fila.remove();
+        actualizarTotal();
       });
       listaProductos.appendChild(fila);
     });
+
+    actualizarTotal();
   }
 });

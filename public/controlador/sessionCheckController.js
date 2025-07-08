@@ -32,7 +32,7 @@ export async function aplicarPermisos() {
       }
 
       const uid = user.uid;
-      console.log("🔐 Usuario autenticado. UID:", uid);
+
 
       const docRef = doc(db, "usuario", uid);
       const snap = await getDoc(docRef);
@@ -46,7 +46,6 @@ export async function aplicarPermisos() {
 
       const data = snap.data();
       const rol = data.rol;
-      console.log("✅ Rol obtenido desde Firestore:", rol);
 
       // Mostrar botón de logout y ocultar login
       if (btnLogin) btnLogin.classList.add("d-none");
@@ -75,12 +74,10 @@ export async function aplicarPermisos() {
         if (el) {
           if (!roles.includes(rol)) {
             el.style.display = "none";
-            console.log(`🚫 Ocultando menú '${id}' para rol '${rol}'`);
           } else {
-            console.log(`✅ Mostrando menú '${id}' para rol '${rol}'`);
           }
         } else {
-          console.warn(`⚠️ Elemento con ID '${id}' no encontrado en el DOM`);
+
         }
       }
 
@@ -88,7 +85,6 @@ export async function aplicarPermisos() {
       const wrapper = document.getElementById("navbar-wrapper");
       if (wrapper) {
         wrapper.style.display = "block";
-        console.log("✅ Navbar mostrado.");
       } else {
         console.warn("⚠️ No se encontró 'navbar-wrapper' en el DOM");
       }
