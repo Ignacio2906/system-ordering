@@ -36,13 +36,14 @@ async function init() {
       url: "../../assets/datatables/es.json"
     },
     drawCallback: function () {
-      $(".dataTable")
-        .find("select")
-        .off("click")
-        .on("click", function (e) {
-          e.stopPropagation();
-        });
-    }
+  $(".dataTable")
+    .find("select")
+    .each(function () {
+      this.addEventListener("click", e => e.stopPropagation());
+      this.addEventListener("mousedown", e => e.stopPropagation());
+    });
+}
+
   });
 
   if (rolUsuario === "admin") {
