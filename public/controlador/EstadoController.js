@@ -77,22 +77,28 @@ window.cambiarEstadoPedido = async function (id, selectElement) {
 
     // Si finalizado, liberar mesa
     if (nuevoEstado === "finalizado") {
-  const pedido = await PedidoModel.obtenerPedidoPorId(id);
-  const numeroMesa = pedido.mesa;
+      const pedido = await PedidoModel.obtenerPedidoPorId(id);
+      const numeroMesa = pedido.mesa;
 
-  const mesas = await PedidoModel.obtenerMesas();
-  const mesaCorrespondiente = mesas.find(m => parseInt(m.numero_mesa) === numeroMesa);
+      const mesas = await PedidoModel.obtenerMesas();
+      const mesaCorrespondiente = mesas.find(m => parseInt(m.numero_mesa) === numeroMesa);
 
+<<<<<<< HEAD
   if (mesaCorrespondiente) {
     await PedidoModel.actualizarMesa(mesaCorrespondiente.id, "libre"); // 
   }
 }
+=======
+      if (mesaCorrespondiente) {
+        await PedidoModel.actualizarMesa(mesaCorrespondiente.id, "libre");
+      }
+    }
+>>>>>>> 08c3a9017ada83d033ea048d069f9222a5290ef9
 
     if (typeof window.mostrarPedidos === "function") {
       window.mostrarPedidos();
     }
   } catch (error) {
-    console.error("Error al actualizar estado:", error);
     mostrarToast("❌ Error al actualizar estado", "error");
     selectElement.value = estadoAnterior;
   }
