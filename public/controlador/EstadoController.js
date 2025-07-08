@@ -1,6 +1,6 @@
 import PedidoModel from "../model/PedidoModel.js";
 
-// ✅ Declarar primero la función antes de usarla
+//  Declarar primero la función antes de usarla
 function generarSelectEstado(pedido, rolUsuario) {
   const estadoActual = pedido.estado || "pendiente";
   let estadosPermitidos = [];
@@ -41,7 +41,7 @@ function generarSelectEstado(pedido, rolUsuario) {
   `;
 }
 
-// ✅ Función para mostrar un toast
+//  Función para mostrar un toast
 function mostrarToast(mensaje, tipo = "success") {
   const toast = document.createElement("div");
   toast.innerText = mensaje;
@@ -60,7 +60,7 @@ function mostrarToast(mensaje, tipo = "success") {
   setTimeout(() => toast.remove(), 3000);
 }
 
-// ✅ Función global para cambio de estado
+//  Función global para cambio de estado
 window.cambiarEstadoPedido = async function (id, selectElement) {
   const nuevoEstado = selectElement.value;
   const estadoAnterior = selectElement.getAttribute("data-actual");
@@ -73,7 +73,7 @@ window.cambiarEstadoPedido = async function (id, selectElement) {
 
   try {
     await PedidoModel.actualizarEstado(id, nuevoEstado);
-    mostrarToast("✅ Estado actualizado correctamente.");
+    mostrarToast(" Estado actualizado correctamente.");
 
     // Si finalizado, liberar mesa
     if (nuevoEstado === "finalizado") {
@@ -84,7 +84,7 @@ window.cambiarEstadoPedido = async function (id, selectElement) {
   const mesaCorrespondiente = mesas.find(m => parseInt(m.numero_mesa) === numeroMesa);
 
   if (mesaCorrespondiente) {
-    await PedidoModel.actualizarMesa(mesaCorrespondiente.id, "libre"); // ✅
+    await PedidoModel.actualizarMesa(mesaCorrespondiente.id, "libre"); // 
   }
 }
 
@@ -98,7 +98,7 @@ window.cambiarEstadoPedido = async function (id, selectElement) {
   }
 };
 
-// ✅ Exporta correctamente
+//  Exporta correctamente
 export default {
   generarSelectEstado
 };

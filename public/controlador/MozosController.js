@@ -58,11 +58,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       if (editingId) {
         await actualizarmozos(editingId, mozos);
-        mostrarMensaje("✅ Mozo actualizado correctamente");
+        mostrarMensaje(" Mozo actualizado correctamente");
         delete form.dataset.editingId;
       } else {
         await agregarmozos(mozos);
-        mostrarMensaje("✅ Mozo agregado correctamente");
+        mostrarMensaje(" Mozo agregado correctamente");
       }
 
       await cargarmozos();

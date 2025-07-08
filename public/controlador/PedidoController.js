@@ -131,7 +131,7 @@ btnRegistrar.addEventListener("click", async () => {
   try {
     await PedidoModel.agregarPedido(pedido);
     await PedidoModel.actualizarMesa(mesaId, "ocupado");
-    alert("✅ Pedido registrado.");
+    alert(" Pedido registrado.");
     resetFormulario();
     formulario.style.display = "none";
   } catch (err) {
@@ -160,7 +160,7 @@ btnActualizar.addEventListener("click", async () => {
 
   try {
     await PedidoModel.actualizarPedido(pedidoId, pedido);
-    alert("✅ Pedido actualizado.");
+    alert(" Pedido actualizado.");
     location.href = "../MntDetalle/detalle.html";
   } catch (err) {
     console.error(err);
