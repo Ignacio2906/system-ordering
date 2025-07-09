@@ -63,12 +63,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("🛠️ Mozo actualizado:", mozos);
       } else {
         await agregarmozos(mozos);
-<<<<<<< HEAD
         mostrarMensaje(" Mozo agregado correctamente");
-=======
-        mostrarMensaje("✅ Mozo agregado correctamente");
-        console.log("➕ Mozo agregado:", mozos);
->>>>>>> 08c3a9017ada83d033ea048d069f9222a5290ef9
       }
 
       await cargarmozos();
@@ -121,7 +116,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     delete form.dataset.editingId;
     document.getElementById("btnSubmit").textContent = "Agregar Mozo";
     document.getElementById("btnCancelar").classList.add("d-none");
-    console.log("❌ Edición cancelada");
+    console.log("Edición cancelada");
   });
 
   // Mensaje tipo toast con Bootstrap

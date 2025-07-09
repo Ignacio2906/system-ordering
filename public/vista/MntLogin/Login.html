@@ -15,13 +15,13 @@
         <img src="/img/logo.jpeg" class="logo-img" alt="Logo" />
       </div>
       <div class="card-body">
-        <form onsubmit="loginUser(event)">
+        <form onsubmit="loginUser(event)" autocomplete="off">
           <div class="form-group">
             <div class="input-group">
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-user"></i></span>
               </div>
-              <input type="email" id="txtusuario" autocomplete="username" class="form-control" placeholder="Correo electrónico" required />
+              <input type="email" id="txtusuario" autocomplete="off" class="form-control" placeholder="Correo electrónico" required />
             </div>
           </div>
 
@@ -30,7 +30,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text"><i class="fas fa-key"></i></span>
               </div>
-              <input type="password" id="txtpassword" autocomplete="current-password" class="form-control" placeholder="Contraseña" required />
+              <input type="password" id="txtpassword" autocomplete="new-password" class="form-control" placeholder="Contraseña" required />
             </div>
           </div>
 

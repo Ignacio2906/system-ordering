@@ -57,11 +57,14 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
 
     <!-- Scripts para navbar y permisos -->
-    <script type="module">
-      import { aplicarPermisos } from "/controlador/sessionCheckController.js";
-      import "/controlador/layoutLoaderController.js";
 
-      aplicarPermisos(); // Oculta/visualiza menú según sesión y rol
-    </script>
+      <script type="module" src="./controlador/layoutLoaderController.js"></script>
+   <script type="module">
+  import { aplicarPermisos } from "/controlador/sessionCheckController.js";
+  aplicarPermisos().catch(err => {
+    console.warn("❌ Error al aplicar permisos:", err);
+  });
+</script>
+
   </body>
 </html>

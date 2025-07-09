@@ -1,3 +1,4 @@
+// loginController.js
 import { auth, db } from "../conexion/firebase.js";
 import {
   signInWithEmailAndPassword
@@ -8,7 +9,6 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-// Función principal del login
 window.loginUser = async function (event) {
   event.preventDefault();
 
@@ -21,36 +21,24 @@ window.loginUser = async function (event) {
   }
 
   try {
-    //  Inicia sesión con Firebase Auth
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    //  Obtiene rol desde Firestore (colección 'usuario')
     const docRef = doc(db, "usuario", user.uid);
     const docSnap = await getDoc(docRef);
 
-    if (!docSnap.exists()) {
-      alert("No se encontró información del usuario en Firestore.");
+    if (!docSnap.exists() || !docSnap.data().rol) {
+      alert("Tu cuenta no tiene un rol válido. Contacta al administrador.");
       return;
     }
 
-    const data = docSnap.data();
-
-    if (!data.rol) {
-      alert("Tu cuenta no tiene un rol asignado. Contacta al administrador.");
-      return;
-    }
-
-    // Guarda información en sessionStorage
-    sessionStorage.setItem("userEmail", user.email);
-    sessionStorage.setItem("uid", user.uid);
-    sessionStorage.setItem("rol", data.rol);
-
-    // Redirige a la página principal
-    window.location.href = "/index.html";
+    // Redirige a index.html (pequeño retraso para que Firebase guarde sesión)
+    setTimeout(() => {
+      window.location.href = "/index.html";
+    }, 100);
 
   } catch (error) {
-    console.error(" Error al iniciar sesión:", error);
+    console.error("Error al iniciar sesión:", error);
     alert("Correo o contraseña incorrectos.");
   }
 };

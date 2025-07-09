@@ -5,12 +5,6 @@ import {
   actualizarProducto
 } from "../model/ProductoModel.js";
 
-import { db, storage } from "../conexion/firebase.js";
-import {
-  doc,
-  deleteDoc
-} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-
 document.addEventListener("DOMContentLoaded", async () => {
   const tabla = $("#tabla-productos").DataTable({
     responsive: true,

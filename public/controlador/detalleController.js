@@ -8,61 +8,66 @@ let pedidos = [];
 let mozosMap = {};
 let tabla;
 let sonido;
-let rolUsuario = sessionStorage.getItem("rol");
+let rolUsuario = null;
 
 async function init() {
-  await aplicarPermisos();
-
-  const mozos = await DetalleModel.obtenerMozos();
-  mozos.forEach(m => {
-    mozosMap[m.dni] = m.nombre;
-  });
-
-  sonido = document.getElementById("notificacion-audio");
-
-  tabla = $("#tabla-detalle").DataTable({
-    data: [],
-    columns: [
-      { title: "Mozo" },
-      { title: "Mesa" },
-      { title: "Productos" },
-      { title: "Total" },
-      { title: "Fecha" },
-      { title: "Estado" },
-      ...(rolUsuario === "admin" || rolUsuario === "mozo" ? [{ title: "Acciones" }] : [])
-    ],
-    responsive: true,
-    language: {
-      url: "../../assets/datatables/es.json"
-    },
-    drawCallback: function () {
-  $(".dataTable")
-    .find("select")
-    .each(function () {
-      this.addEventListener("click", e => e.stopPropagation());
-      this.addEventListener("mousedown", e => e.stopPropagation());
+  try {
+    // Obtener rol actual del usuario autenticado
+    rolUsuario = await aplicarPermisos();
+        const mozos = await DetalleModel.obtenerMozos();
+    mozos.forEach(m => {
+      mozosMap[m.dni] = m.nombre;
     });
-}
 
-  });
+    sonido = document.getElementById("notificacion-audio");
 
-  if (rolUsuario === "admin") {
-    document.getElementById("btn-exportar-excel-container").style.display = "block";
-    document.getElementById("btn-exportar-excel").addEventListener("click", () => {
-      exportarTodosLosPedidosAExcel(pedidos, mozosMap);
+    tabla = $("#tabla-detalle").DataTable({
+      data: [],
+      columns: [
+        { title: "Mozo" },
+        { title: "Mesa" },
+        { title: "Productos" },
+        { title: "Total" },
+        { title: "Fecha" },
+        { title: "Estado" },
+        ...(rolUsuario === "admin" || rolUsuario === "mozo" ? [{ title: "Acciones" }] : [])
+      ],
+      responsive: true,
+      language: {
+        url: "../../assets/datatables/es.json"
+      },
+      drawCallback: function () {
+        $(".dataTable").find("select").each(function () {
+          this.addEventListener("click", e => e.stopPropagation());
+          this.addEventListener("mousedown", e => e.stopPropagation());
+        });
+      }
     });
+
+    // Mostrar botón de exportar solo para admin
+    if (rolUsuario === "admin") {
+      document.getElementById("btn-exportar-excel-container").style.display = "block";
+      document.getElementById("btn-exportar-excel").addEventListener("click", () => {
+        exportarTodosLosPedidosAExcel(pedidos, mozosMap);
+      });
+    }
+
+    // Escuchar cambios en los pedidos
+    DetalleModel.escucharPedidos(nuevosPedidos => {
+      detectarCambiosSonido(pedidos, nuevosPedidos);
+      pedidos = nuevosPedidos;
+      actualizarTabla();
+    });
+
+  } catch (error) {
+    console.error("❌ Error al iniciar vista Detalle:", error);
   }
-
-  DetalleModel.escucharPedidos(nuevosPedidos => {
-    detectarCambiosSonido(pedidos, nuevosPedidos);
-    pedidos = nuevosPedidos;
-    actualizarTabla();
-  });
 }
 
 function detectarCambiosSonido(previos, actuales) {
   for (const actual of actuales) {
     const previo = previos.find(p => p.id === actual.id);
+
     if (!previo) {
       if (rolUsuario === "cocinero" && actual.estado === "pendiente") {
         sonido?.play();
@@ -91,6 +96,7 @@ function actualizarTabla() {
     if (rolUsuario === "admin" || rolUsuario === "mozo") {
       fila.push(generarBotones(p));
     }
+
     return fila;
   });
 
