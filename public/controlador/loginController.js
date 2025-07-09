@@ -21,11 +21,11 @@ window.loginUser = async function (event) {
   }
 
   try {
-    // 🔐 Inicia sesión con Firebase Auth
+    //  Inicia sesión con Firebase Auth
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 📄 Obtiene rol desde Firestore (colección 'usuario')
+    //  Obtiene rol desde Firestore (colección 'usuario')
     const docRef = doc(db, "usuario", user.uid);
     const docSnap = await getDoc(docRef);
 
@@ -41,16 +41,16 @@ window.loginUser = async function (event) {
       return;
     }
 
-    // 💾 Guarda información en sessionStorage
+    // Guarda información en sessionStorage
     sessionStorage.setItem("userEmail", user.email);
     sessionStorage.setItem("uid", user.uid);
     sessionStorage.setItem("rol", data.rol);
 
-    // 🚀 Redirige a la página principal
+    // Redirige a la página principal
     window.location.href = "/index.html";
 
   } catch (error) {
-    console.error("❌ Error al iniciar sesión:", error);
+    console.error(" Error al iniciar sesión:", error);
     alert("Correo o contraseña incorrectos.");
   }
 };

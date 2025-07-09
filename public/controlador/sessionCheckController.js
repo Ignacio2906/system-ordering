@@ -57,6 +57,7 @@ export async function aplicarPermisos() {
         btnLogout.addEventListener("click", async (e) => {
           e.preventDefault();
           await signOut(auth);
+          sessionStorage.clear();
           window.location.href = "/vista/MntLogin/Login.html";
         });
       }
