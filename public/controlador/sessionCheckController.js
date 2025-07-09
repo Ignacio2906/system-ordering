@@ -46,10 +46,7 @@ export async function aplicarPermisos() {
 
       const data = snap.data();
       const rol = data.rol;
-<<<<<<< HEAD
       console.log(" Rol obtenido desde Firestore:", rol);
-=======
->>>>>>> 08c3a9017ada83d033ea048d069f9222a5290ef9
 
       // Mostrar botón de logout y ocultar login
       if (btnLogin) btnLogin.classList.add("d-none");
@@ -79,10 +76,7 @@ export async function aplicarPermisos() {
           if (!roles.includes(rol)) {
             el.style.display = "none";
           } else {
-<<<<<<< HEAD
             console.log(` Mostrando menú '${id}' para rol '${rol}'`);
-=======
->>>>>>> 08c3a9017ada83d033ea048d069f9222a5290ef9
           }
         } else {
 
@@ -93,10 +87,7 @@ export async function aplicarPermisos() {
       const wrapper = document.getElementById("navbar-wrapper");
       if (wrapper) {
         wrapper.style.display = "block";
-<<<<<<< HEAD
         console.log(" Navbar mostrado.");
-=======
->>>>>>> 08c3a9017ada83d033ea048d069f9222a5290ef9
       } else {
         console.warn("⚠️ No se encontró 'navbar-wrapper' en el DOM");
       }
