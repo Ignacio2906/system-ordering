@@ -44,12 +44,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     e.preventDefault();
 
     const archivo = document.getElementById("imagenArchivo").files[0];
-    const nombre = document.getElementById("txtnombre").value;
-    const descripcion = document.getElementById("txtdescripcion").value;
+    const nombre = document.getElementById("txtnombre").value.trim();
+    const descripcion = document.getElementById("txtdescripcion").value.trim();
     const precio = document.getElementById("txtprecio").value;
 
+    // Validación de campos
+    if (!nombre || !descripcion || !precio || isNaN(precio)) {
+      mostrarMensajeError("Completa todos los campos correctamente.");
+      return;
+    }
+
+    // Validación de imagen
     if (!modoEdicion && !archivo) {
-      mostrarMensaje("Selecciona una imagen para el producto.");
+      mostrarMensajeError("Selecciona una imagen para el producto.");
+      return;
+    }
+
+    if (archivo && !archivo.type.startsWith("image/")) {
+      mostrarMensajeError("Solo se permiten archivos de imagen.");
       return;
     }
 
@@ -64,10 +76,31 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await cargarProductos();
       e.target.reset();
+      document.getElementById("previewImagen").classList.add("d-none");
       salirModoEdicion();
     } catch (error) {
       mostrarMensajeError("Error al guardar el producto.");
       console.error(error);
+    }
+  });
+
+  // Previsualización de imagen
+  document.getElementById("imagenArchivo").addEventListener("change", e => {
+    const archivo = e.target.files[0];
+    const preview = document.getElementById("previewImagen");
+
+    if (archivo && archivo.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.classList.remove("d-none");
+      };
+      reader.readAsDataURL(archivo);
+    } else {
+      mostrarMensajeError("El archivo seleccionado no es una imagen.");
+      e.target.value = "";
+      preview.classList.add("d-none");
+      preview.src = "#";
     }
   });
 
@@ -100,11 +133,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("tituloFormulario").textContent = "Editar Producto";
     document.getElementById("btnGuardar").textContent = "Actualizar Producto";
     document.getElementById("btnCancelar").classList.remove("d-none");
+    document.getElementById("previewImagen").src = data.imagenURL;
+    document.getElementById("previewImagen").classList.remove("d-none");
+
     modoEdicion = true;
   });
 
   document.getElementById("btnCancelar").addEventListener("click", () => {
     document.getElementById("formProducto").reset();
+    document.getElementById("previewImagen").classList.add("d-none");
     salirModoEdicion();
   });
 
@@ -115,6 +152,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("tituloFormulario").textContent = "Agregar Producto";
     document.getElementById("btnGuardar").textContent = "Agregar Producto";
     document.getElementById("btnCancelar").classList.add("d-none");
+    document.getElementById("previewImagen").src = "#";
+    document.getElementById("previewImagen").classList.add("d-none");
   }
 
   function mostrarMensaje(mensaje) {

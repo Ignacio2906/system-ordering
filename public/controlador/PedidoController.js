@@ -185,7 +185,7 @@ function resetFormulario() {
 function actualizarTotal() {
   const total = productosPedido.reduce((acc, item) => acc + item.total, 0);
   const totalEl = document.getElementById("total-pedido");
-  if (totalEl) totalEl.textContent = `Total: S/ ${total.toFixed(2)}`;
+  if (totalEl) totalEl.textContent = `S/ ${total.toFixed(2)}`;
 }
 
 window.addEventListener("DOMContentLoaded", async () => {

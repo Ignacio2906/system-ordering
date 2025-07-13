@@ -42,10 +42,12 @@
               <label for="txtprecio">Precio</label>
               <input type="number" step="0.01" min="0" id="txtprecio" name="precio" class="form-control" required>
             </div>
-            <div class="form-group">
-              <label for="imagenArchivo">Imagen del Producto</label>
-              <input type="file" name="imagen" id="imagenArchivo" class="form-control" accept="image/*" />
-            </div>
+           <div class="form-group">
+  <label for="imagenArchivo">Imagen del Producto</label>
+  <input type="file" name="imagen" id="imagenArchivo" class="form-control" accept="image/*" />
+  <img id="previewImagen" src="#" alt="Previsualización" class="img-fluid mt-2 d-none" style="max-height: 150px;" />
+</div>
+
             <div class="d-grid gap-2 mt-3">
               <button type="submit" class="btn btn-primary" id="btnGuardar">Agregar Producto</button>
               <button type="button" class="btn btn-secondary d-none" id="btnCancelar">Cancelar Edición</button>
